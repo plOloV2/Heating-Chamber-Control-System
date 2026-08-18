@@ -1,0 +1,93 @@
+# @author Aleksander Dziągwa
+
+cmake_minimum_required(VERSION 4.1)
+
+project(aero_oven C ASM)
+message("Build type: " ${CMAKE_BUILD_TYPE})
+
+# Setup C compiler settings
+set(CMAKE_C_STANDARD                23)
+set(CMAKE_C_STANDARD_REQUIRED       ON)
+set(CMAKE_C_EXTENSIONS              ON)
+set(CMAKE_CXX_STANDARD              17)
+set(CMAKE_CXX_STANDARD_REQUIRED     ON)
+set(CMAKE_CXX_EXTENSIONS            ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
+
+# Sources
+set(sources_SRCS
+    app/main_logic/src/main.c
+    startup/startup_stm32f405.c
+    platform/system_init.c
+)
+
+# Include directories
+set(include_DIRS
+    third_party/CMSIS/Core/Include
+    third_party/CMSIS/STM32F4xx/Include
+)
+
+# Linker script
+set(linker_script_SRC
+    ${CMAKE_CURRENT_LIST_DIR}/linker/stm32f405rg_flash.ld
+)
+
+# App version check
+add_custom_target(
+    GenerateVersionHeader
+    COMMAND ${CMAKE_COMMAND} 
+        -D PROJ_ROOT=${CMAKE_CURRENT_SOURCE_DIR}
+        -D TEMPLATE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/cmake/build_version/version.h.in
+        -D OUTPUT_FILE=${CMAKE_CURRENT_BINARY_DIR}/version.h
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/build_version/git_version.cmake
+    BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/version.h
+    COMMENT "Checking Git version..."
+    VERBATIM
+)
+
+# Create an executable object type
+add_executable(${CMAKE_PROJECT_NAME} ${sources_SRCS})
+
+# Add include paths
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE 
+    ${include_DIRS}
+    ${CMAKE_CURRENT_BINARY_DIR} 
+)
+
+# Ensures the version header is generated before compilation
+add_dependencies(${CMAKE_PROJECT_NAME} GenerateVersionHeader)
+
+# Add project symbols (macros)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
+    RTE_DEVICE_STARTUP_STM32H7XX
+)
+
+# Compiler options
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+    ${CPU_PARAMS}
+    -O3
+    -ffast-math
+    -fstack-usage
+    -ffreestanding
+    -fno-stack-protector 
+    -flto=auto
+    $<$<CONFIG:Debug>:-ggdb3>
+    $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp -MP>
+)
+
+# Linker options
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -T${linker_script_SRC}
+    ${CPU_PARAMS}
+    ${LINKER_FLAGS}
+)
+
+# Set linker script as a dependency to force re-link if it changes
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_DEPENDS ${linker_script_SRC})
+
+# Execute post-build to print size, generate hex and bin
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
+)

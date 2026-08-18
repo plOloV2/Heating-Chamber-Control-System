@@ -1,0 +1,58 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug_st-link",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "CMake Debug Build",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "svdFile": "${workspaceFolder}/STM32F405.svd",
+            "gdbPath": "arm-none-eabi-gdb",
+            "executable": "${workspaceFolder}/build/debug/aero_oven.elf",
+            "device": "STM32F405RG",
+            "configFiles": ["${workspaceFolder}/tools/openocd/stm32f405_stlink.cfg"],
+            "runToEntryPoint": "main"
+        },
+        {
+            "name": "Attach_st-link",
+            "cwd": "${workspaceFolder}",
+            "type": "cortex-debug",
+            "request": "attach",
+            "servertype": "openocd",
+            "svdFile": "${workspaceFolder}/STM32F405.svd",
+            "gdbPath": "arm-none-eabi-gdb",
+            "executable": "${workspaceFolder}/build/debug/aero_oven.elf",
+            "device": "STM32F405RG",
+            "configFiles": ["${workspaceFolder}/tools/openocd/stm32f405_stlink.cfg"]
+        },
+        {
+            "name": "Debug_BMP",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "CMake Debug Build",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "bmp",
+            "BMPGDBSerialPort": "/dev/ttyBmpGdb",
+            "svdFile": "${workspaceFolder}/STM32F405.svd",
+            "gdbPath": "arm-none-eabi-gdb",
+            "executable": "${workspaceFolder}/build/debug/aero_oven.elf",
+            "runToEntryPoint": "main"
+        },
+        {
+            "name": "Attach_BMP",
+            "cwd": "${workspaceFolder}",
+            "type": "cortex-debug",
+            "request": "attach",
+            "servertype": "bmp",
+            "BMPGDBSerialPort": "/dev/ttyBmpGdb",
+            "svdFile": "${workspaceFolder}/STM32F405.svd",
+            "gdbPath": "arm-none-eabi-gdb",
+            "executable": "${workspaceFolder}/build/debug/aero_oven.elf",
+        }
+    ]
+}

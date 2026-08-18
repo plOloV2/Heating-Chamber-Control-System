@@ -1,0 +1,47 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base-config",
+      "hidden": true,
+      "generator": "Ninja",
+      "toolchainFile": "${sourceDir}/cmake/toolchain-llvm.cmake",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "type-debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "type-release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "Release",
+      "inherits": ["base-config", "type-release"]
+    },
+    {
+      "name": "Debug",
+      "inherits": ["base-config", "type-debug"]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Release",
+      "configurePreset": "Release"
+    },
+    {
+      "name": "Debug",
+      "configurePreset": "Debug"
+    }
+  ]
+}
