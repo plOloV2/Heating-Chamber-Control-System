@@ -9,9 +9,6 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_C_STANDARD                23)
 set(CMAKE_C_STANDARD_REQUIRED       ON)
 set(CMAKE_C_EXTENSIONS              ON)
-set(CMAKE_CXX_STANDARD              17)
-set(CMAKE_CXX_STANDARD_REQUIRED     ON)
-set(CMAKE_CXX_EXTENSIONS            ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 
 # Sources
@@ -77,7 +74,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -fstack-usage
     -ffreestanding
     -fno-stack-protector
-    $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp -MP>
+    $<$<COMPILE_LANGUAGE:ASM>:-x -MP>
 )
 
 # Linker options
