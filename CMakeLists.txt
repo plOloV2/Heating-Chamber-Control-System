@@ -16,15 +16,18 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 
 # Sources
 set(sources_SRCS
-    app/main_logic/src/main.c
+    app/src/main.c
     startup/startup_stm32f405.c
     platform/system_init.c
+    platform/clock_init.c
+    platform/rtc_init.c
 )
 
 # Include directories
 set(include_DIRS
-    third_party/CMSIS/Core/Include
-    third_party/CMSIS/STM32F4xx/Include
+    app/inc
+    CMSIS/Core/Include
+    CMSIS/Device/Include
 )
 
 # Linker script
@@ -38,7 +41,7 @@ add_custom_target(
     COMMAND ${CMAKE_COMMAND} 
         -D PROJ_ROOT=${CMAKE_CURRENT_SOURCE_DIR}
         -D TEMPLATE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/cmake/build_version/version.h.in
-        -D OUTPUT_FILE=${CMAKE_CURRENT_BINARY_DIR}/version.h
+        -D OUTPUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/app/inc/version.h
         -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/build_version/git_version.cmake
     BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/version.h
     COMMENT "Checking Git version..."
@@ -59,19 +62,21 @@ add_dependencies(${CMAKE_PROJECT_NAME} GenerateVersionHeader)
 
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-    RTE_DEVICE_STARTUP_STM32H7XX
+    STM32F405xx
+    HSE_VALUE=16000000UL
+    LSE_VALUE=32768UL
 )
+
+set(CMAKE_C_FLAGS_DEBUG             "-Og -ggdb3")
+set(CMAKE_C_FLAGS_RELEASE           "-O3 -DNDEBUG -flto=auto")
 
 # Compiler options
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     ${CPU_PARAMS}
-    -O3
-    -ffast-math
+    ${ERROR_FLAGS}
     -fstack-usage
     -ffreestanding
-    -fno-stack-protector 
-    -flto=auto
-    $<$<CONFIG:Debug>:-ggdb3>
+    -fno-stack-protector
     $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp -MP>
 )
 

@@ -1,90 +1,78 @@
-// #include "stm32f4xx.h"
+/**
+ * @file system_init.c
+ * @brief STM32F405RG system clock and RTC clock initialization.
+ */
 
-// Sets HSI freq
-#ifndef HSI_VALUE
-    #define HSI_VALUE ((uint32_t)64'000'000)
+#include "stm32f4xx.h"
+#include "./system_init.h"
+
+/*
+ * Clock tree:
+ *   HSE        = 16 MHz
+ *   PLL input  = HSE / 16 = 1 MHz
+ *   PLL VCO    = 1 MHz * 336 = 336 MHz
+ *   SYSCLK     = VCO / 2 = 168 MHz
+ *   PLL48CLK   = VCO / 7 = 48 MHz
+ *   HCLK       = SYSCLK / 1 = 168 MHz
+ *   PCLK1      = HCLK / 4 = 42 MHz
+ *   PCLK2      = HCLK / 2 = 84 MHz
+ */
+
+uint32_t SystemCoreClock = HSI_VALUE;
+volatile system_init_status_t SystemInitStatus = SYSTEM_INIT_STATUS_OK;
+
+system_init_status_t configure_main_clock(void);
+system_init_status_t configure_rtc_clock(void);
+void reset_clock_tree(void);
+
+const uint8_t AHBPrescTable[16] = {0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 1U, 2U, 3U, 4U, 6U, 7U, 8U, 9U};
+const uint8_t APBPrescTable[8] = {0U, 0U, 0U, 0U, 1U, 2U, 3U, 4U};
+
+void SystemInit(void)
+{
+#if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
+    SET_BIT(SCB->CPACR, (3UL << (10U * 2U)) | (3UL << (11U * 2U)));
+    __DSB();
+    __ISB();
 #endif
+    SCB->VTOR = FLASH_BASE;
 
-// Sets HSE freq
-#ifndef HSE_VALUE
-    #define HSE_VALUE ((uint32_t)16'000'000)
-#endif
-
-
-uint32_t SystemCoreClock = 64'000'000;
-
-void SystemInit(void){
-
-    /* FPU settings ------------------------------------------------------------*/
-    #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
-        SET_BIT(SCB->CPACR, ((3UL << (10*2)) | (3UL << (11*2))));  /* set CP10 and CP11 Full Access */
-    #endif
-
-    /* Set HSI on */
-    SET_BIT(RCC->CR, RCC_CR_HSION);
-
-    /* Wait for HSI to start */
-    while(!READ_BIT(RCC->CR, RCC_CR_HSIRDY));
-
-    /* Reset CFGR register */
-    CLEAR_REG(RCC->CFGR);
-
-    /* Reset HSEON, HSECSSON, CSION, HSI48ON, CSIKERON, PLL1ON, PLL2ON and PLL3ON bits */
-    RCC->CR &= 0xEAF6'ED7FU;
-
-    /* Decreasing the number of wait states because of lower CPU frequency */
-    if(FLASH_LATENCY_DEFAULT  < (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY))){
-
-        /* Program the new number of wait states to the LATENCY bits in the FLASH_ACR register */
-        MODIFY_REG(FLASH->ACR, FLASH_ACR_LATENCY, (uint32_t)(FLASH_LATENCY_DEFAULT));
-
-    }
-
-    /* Reset D1 domain prescaler */
-    CLEAR_REG(RCC->D1CFGR);
-
-    /* Reset D2 domain prescaler */
-    CLEAR_REG(RCC->D2CFGR);
-
-    /* Reset D3 domain prescaler */
-    CLEAR_REG(RCC->D3CFGR);
-
-    /* Reset PLLCKSELR register */
-    WRITE_REG(RCC->PLLCKSELR, 0x0202'0200);
-
-    /* Reset PLLCFGR register */
-    WRITE_REG(RCC->PLLCFGR, 0x01FF'0000);
-
-    /* Reset PLL1DIVR register */
-    WRITE_REG(RCC->PLL1DIVR, 0x0101'0280);
-
-    /* Reset PLL1FRACR register */
-    CLEAR_REG(RCC->PLL1FRACR);
-
-    /* Reset PLL2DIVR register */
-    WRITE_REG(RCC->PLL2DIVR, 0x0101'0280);
-
-    /* Reset PLL2FRACR register */
-    CLEAR_REG(RCC->PLL2FRACR);
-
-    /* Reset PLL3DIVR register */
-    WRITE_REG(RCC->PLL3DIVR, 0x0101'0280);
-
-    /* Reset PLL3FRACR register */
-    CLEAR_REG(RCC->PLL3FRACR);
-
-    /* Reset HSEBYP bit */
-    RCC->CR &= 0xFFFB'FFFFU;
-
-    /* Disable all interrupts */
-    CLEAR_REG(RCC->CIER);
+    reset_clock_tree();
     
-
+    const system_init_status_t main_clock_status = configure_main_clock();
+    const system_init_status_t rtc_clock_status = configure_rtc_clock();
+    SystemInitStatus = (system_init_status_t)((uint32_t)main_clock_status | (uint32_t)rtc_clock_status);
 }
 
-/* Set SystemCoreClock variable */
-void SystemCoreClockUpdate(void){
+void SystemCoreClockUpdate(void)
+{
+    uint32_t system_clock;
 
-    SystemCoreClock = 64'000'000;
+    switch (READ_BIT(RCC->CFGR, RCC_CFGR_SWS)) {
+        case RCC_CFGR_SWS_HSE:
+            system_clock = HSE_VALUE;
+            break;
+
+        case RCC_CFGR_SWS_PLL: {
+            const uint32_t pll_source = (READ_BIT(RCC->PLLCFGR, RCC_PLLCFGR_PLLSRC) != 0U) ? HSE_VALUE : HSI_VALUE;
+            const uint32_t pll_m = READ_BIT(RCC->PLLCFGR, RCC_PLLCFGR_PLLM);
+            const uint32_t pll_n = READ_BIT(RCC->PLLCFGR, RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
+            const uint32_t pll_p = (((READ_BIT(RCC->PLLCFGR, RCC_PLLCFGR_PLLP) >> RCC_PLLCFGR_PLLP_Pos) + 1UL) * 2UL);
+
+            if (pll_m == 0U) {
+                system_clock = HSI_VALUE;
+            } else {
+                system_clock = ((pll_source / pll_m) * pll_n) / pll_p;
+            }
+            break;
+        }
+
+        case RCC_CFGR_SWS_HSI:
+        default:
+            system_clock = HSI_VALUE;
+            break;
+    }
+
+    SystemCoreClock = system_clock >> AHBPrescTable[READ_BIT(RCC->CFGR, RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos];
 
 }

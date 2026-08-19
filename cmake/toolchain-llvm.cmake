@@ -9,7 +9,7 @@ set(TOOLCHAIN_PREFIX                arm-)
 set(CPU_PARAMS                      -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard)
 
 # C and C++ comon flags
-set(FLAGS                           --target=arm-none-eabi -fdata-sections -ffunction-sections --specs=picolibc.specs)
+set(FLAGS                           --target=arm-none-eabi -fdata-sections -ffunction-sections)
 
 # Specyfic C++ flags
 set(CPP_FLAGS                       -fno-rtti -fno-exceptions -fno-threadsafe-statics)

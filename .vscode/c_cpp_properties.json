@@ -1,0 +1,25 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "Linux-ATfE",
+            "includePath": [
+                "${workspaceFolder}/app/inc",
+                "${workspaceFolder}/CMSIS/Core/Include",
+                "${workspaceFolder}/CMSIS/Device/Include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/local/bin/arm-clang",
+            "cStandard": "c23",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-clang-arm",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ]
+}

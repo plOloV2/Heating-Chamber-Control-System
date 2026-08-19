@@ -256,14 +256,6 @@ void Reset_Handler(void)
     const uint32_t *source;
     uint32_t *destination;
 
-    /* Enable FPU coprocessors */
-    SCB->CPACR |= (3UL << 20U) | (3UL << 22U);
-    __DSB();
-    __ISB();
-
-    /* Set Vector Table Offset */
-    SCB->VTOR = (uint32_t)(uintptr_t)g_pfnVectors;
-
     /* Copy .data segment to RAM */
     source = &_sidata;
     destination = &_sdata;
@@ -330,15 +322,5 @@ void Reset_Handler(void)
     {
         __NOP();
     }
-    
-}
 
-void _init(void)
-{
-    /* Do nothing */
-}
-
-void _fini(void)
-{
-    /* Do nothing */
 }
