@@ -1,7 +1,7 @@
 /**
  * *****************************************************************************
  * @file        startup_stm32f405.c
- * @brief       STM32F405xx Devices vector table for GCC based toolchains.
+ * @brief       STM32F405xx Devices vector table for ATfE based toolchains.
  * @author      Aleksander Dziągwa
  * *****************************************************************************
  */
@@ -12,27 +12,27 @@
 #define WEAK __attribute__((weak, alias("Default_Handler"), noreturn))
 
 /* Linker script symbols for RAM */
-extern uint32_t __StackTop;
-extern uint32_t _sidata;
-extern uint32_t _sdata;
-extern uint32_t _edata;
+extern uint32_t __stack;
+extern uint32_t __data_source;
+extern uint32_t __data_start;
+extern uint32_t __data_size;
+extern uint32_t __data_end;
 
-extern uint32_t _sbss;
-extern uint32_t _ebss;
+extern uint32_t __bss_start;
+extern uint32_t __bss_end;
 
 /* Linker script symbols for CCMRAM */
-extern uint32_t _siccmram;
-extern uint32_t _sccmram;
-extern uint32_t _eccmram;
-extern uint32_t _sccmbss;
-extern uint32_t _eccmbss;
+extern uint32_t __ccmram_source;
+extern uint32_t __ccmram_start;
+extern uint32_t __ccmram_end;
+extern uint32_t __ccmram_bss_start;
+extern uint32_t __ccmram_bss_end;
 
 /* Linker script symbols for TLS */
-extern uint32_t _sitdata;
-extern uint32_t _stdata;
-extern uint32_t _etdata;
-extern uint32_t _stbss;
-extern uint32_t _etbss;
+extern uint32_t __tdata_source;
+extern uint32_t __tls_base;
+extern uint32_t __tdata_end;
+extern uint32_t __tls_end;
 
 /* Picolibc function to set the TLS pointer for the current thread */
 extern void _set_tls(void *tls);
@@ -138,7 +138,7 @@ void WEAK FPU_IRQHandler(void);
 __attribute__((section(".isr_vector"), used, aligned(512)))
 void (* const g_pfnVectors[])(void) =
 {
-    (void (*)(void))&__StackTop,
+    (void (*)(void))&__stack,
     Reset_Handler,
     NMI_Handler,
     HardFault_Handler,
@@ -257,9 +257,9 @@ void Reset_Handler(void)
     uint32_t *destination;
 
     /* Copy .data segment to RAM */
-    source = &_sidata;
-    destination = &_sdata;
-    while (destination < &_edata)
+    source = &__data_source;
+    destination = &__data_start;
+    while (destination < &__data_end)
     {
         *destination = *source;
         ++destination;
@@ -267,9 +267,9 @@ void Reset_Handler(void)
     }
 
     /* Copy .ccmram segment to CCM RAM */
-    source = &_siccmram;
-    destination = &_sccmram;
-    while (destination < &_eccmram)
+    source = &__ccmram_source;
+    destination = &__ccmram_start;
+    while (destination < &__ccmram_end)
     {
         *destination = *source;
         ++destination;
@@ -277,25 +277,25 @@ void Reset_Handler(void)
     }
 
     /* Zero out .bss segment */
-    destination = &_sbss;
-    while (destination < &_ebss)
+    destination = &__bss_start;
+    while (destination < &__bss_end)
     {
         *destination = 0U;
         ++destination;
     }
 
     /* Zero out .ccmbss segment */
-    destination = &_sccmbss;
-    while (destination < &_eccmbss)
+    destination = &__ccmram_bss_start;
+    while (destination < &__ccmram_bss_end)
     {
         *destination = 0U;
         ++destination;
     }
 
     /* Copy .tdata segment to RAM */
-    source = &_sitdata;
-    destination = &_stdata;
-    while (destination < &_etdata)
+    source = &__tdata_source;
+    destination = &__tls_base;
+    while (destination < &__tdata_end)
     {
         *destination = *source;
         ++destination;
@@ -303,15 +303,15 @@ void Reset_Handler(void)
     }
 
     /* Zero out .tbss segment */
-    destination = &_stbss;
-    while (destination < &_etbss)
+    destination = &__tdata_end;
+    while (destination < &__tls_end)
     {
         *destination = 0U;
         ++destination;
     }
 
     /* Initialize Picolibc TLS for the main thread */
-    _set_tls(&_stdata);
+    _set_tls(&__tls_base);
 
     /* Initialize system and start application */
     SystemInit();

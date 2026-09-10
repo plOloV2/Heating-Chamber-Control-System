@@ -1,6 +1,6 @@
 set(CMAKE_SYSTEM_NAME               Generic)
 set(CMAKE_SYSTEM_PROCESSOR          arm)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE   STATIC_LIBRARY)
 
 # arm-none-eabi- prefix
 set(TOOLCHAIN_PREFIX                arm-)
@@ -15,7 +15,7 @@ set(FLAGS                           --target=arm-none-eabi -fdata-sections -ffun
 set(ERROR_FLAGS                     -Wall -Wextra -Werror)
 
 # Linker flags
-set(LINKER_FLAGS                   -fuse-ld=lld -Wl,--gc-sections,-Map=${CMAKE_PROJECT_NAME}.map,--print-memory-usage -nostartfiles --specs=picolibc.specs)
+set(LINKER_FLAGS                   -fuse-ld=lld -Wl,--gc-sections,-Map=${CMAKE_PROJECT_NAME}.map,--print-memory-usage -nostartfiles)
 
 # Define compiler settings
 set(CMAKE_C_COMPILER                ${TOOLCHAIN_PREFIX}clang ${FLAGS})

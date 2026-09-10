@@ -9,13 +9,13 @@
 
 
 /* Removed 'static' so rtc_init.c can use it */
-uint32_t wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value)
+bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value)
 {
     uint32_t timeout = SystemCoreClock;
     while (((*register_address & mask) != expected_value) && (timeout != 0U)) {
         --timeout;
     }
-    return ((*register_address & mask) == expected_value) ? 1U : 0U;
+    return ((*register_address & mask) == expected_value);
 }
 
 static void retain_hsi_clock(void)
@@ -102,7 +102,6 @@ system_init_status_t configure_main_clock(void)
         return SYSTEM_INIT_STATUS_SYSCLK_SWITCH_TIMEOUT;
     }
 
-    SystemCoreClock = SYSTEM_CLOCK_HZ;
     return SYSTEM_INIT_STATUS_OK;
 
 }

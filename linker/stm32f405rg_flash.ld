@@ -17,8 +17,8 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 _Min_Heap_Size = 0x0;       /* required amount of heap  */
 _Min_Stack_Size = 0x400;    /* required amount of stack */
 
-__StackTop = _estack;
-__StackLimit = __StackTop - _Min_Stack_Size;
+__stack = _estack;
+__stack_limit = __stack - _Min_Stack_Size;
 
 /* Define output sections */
 SECTIONS
@@ -99,83 +99,83 @@ SECTIONS
 
 
   /* CCMRAM data section */
-  _siccmram = LOADADDR(.ccmram);
+  __ccmram_source = LOADADDR(.ccmram);
   .ccmram :
   {
     . = ALIGN(4);
-    _sccmram = .;       /* create a global symbol at ccmram start */
+    __ccmram_start = .;       /* create a global symbol at ccmram start */
     *(.ccmram)
     *(.ccmram*)
 
     . = ALIGN(4);
-    _eccmram = .;       /* create a global symbol at ccmram end */
+    __ccmram_end = .;       /* create a global symbol at ccmram end */
   } >CCMRAM AT> FLASH
 
 
   /* Uninitialized CCM-RAM section */
-  .ccmbss (NOLOAD) :
+  .ccmram_bss (NOLOAD) :
   {
     . = ALIGN(4);
-    _sccmbss = .;       /* create a global symbol at ccmbss start */
-    *(.ccmbss)
-    *(.ccmbss*)
+    __ccmram_bss_start = .;       /* create a global symbol at ccmram_bss start */
+    *(.ccmram_bss)
+    *(.ccmram_bss*)
+
     . = ALIGN(4);
-    _eccmbss = .;       /* create a global symbol at ccmbss end */
+    __ccmram_bss_end = .;       /* create a global symbol at ccmram_bss end */
   } >CCMRAM
 
+
   /* used by the startup to initialize data */
-  _sidata = LOADADDR(.data);
+  __data_source = LOADADDR(.data);
 
 
   /* Initialized data section */
   .data :
   {
     . = ALIGN(4);
-    _sdata = .;        /* create a global symbol at data start */
-    *(.data)           /* .data sections */
-    *(.data*)          /* .data* sections */
+    __data_start = .;     /* create a global symbol at data start */
+    *(.data)              /* .data sections */
+    *(.data*)             /* .data* sections */
     . = ALIGN(4);
-    _edata = .;        /* create a global symbol at data end */
+    __data_end = .;       /* create a global symbol at data end */
+    __data_size = . - __data_start;        
   } >RAM AT> FLASH
+
+
+  /* Thread Local Storage (TLS) initialized data */
+  __tdata_source = LOADADDR(.tdata);
+  .tdata : ALIGN(8)
+  {
+    __tls_base = .;
+    *(.tdata .tdata.* .gnu.linkonce.td.*)
+    . = ALIGN(8);
+  } >RAM AT> FLASH
+
+
+  /* Thread Local Storage (TLS) uninitialized data. */
+  .tbss (NOLOAD) : ALIGN(8)
+  {
+    __tdata_end = .;
+    *(.tbss .tbss.* .gnu.linkonce.tb.*)
+    *(.tcommon)
+    . = ALIGN(8);
+    __tls_end = .;
+  } >RAM
 
 
   .bss (NOLOAD) : ALIGN(4)
   {
-    _sbss = .;         /* define a global symbol at bss start */
-    __bss_start__ = _sbss;
+    __bss_start = .;         /* define a global symbol at bss start */
     *(.bss)
     *(.bss*)
     *(COMMON)
     . = ALIGN(4);
-    _ebss = .;         /* define a global symbol at bss end */
-    __bss_end__ = _ebss;
+    __bss_end = .;         /* define a global symbol at bss end */
     PROVIDE( __bss_end = . );
   } >RAM
   PROVIDE( __bss_size = __bss_end - __bss_start );
   PROVIDE( __non_tls_bss_start = ADDR(.bss) );
 
-
-  /* Thread Local Storage (TLS) initialized data */
-  _sitdata = LOADADDR(.tdata);
-  .tdata : ALIGN(8)
-  {
-    _stdata = .;
-    *(.tdata .tdata.* .gnu.linkonce.td.*)
-    . = ALIGN(8);
-    _etdata = .;
-  } >RAM AT> FLASH
-
-
-  /* Thread Local Storage (TLS) uninitialized data. Keep this immediately
-     after .tdata so the initial TLS image is contiguous. */
-  .tbss (NOLOAD) : ALIGN(8)
-  {
-    _stbss = .;
-    *(.tbss .tbss.* .gnu.linkonce.tb.*)
-    *(.tcommon)
-    . = ALIGN(8);
-    _etbss = .;
-  } >RAM
 
   /* Required by Picolibc's ARM _set_tls implementation. */
   PROVIDE(__tls_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss)));
@@ -196,9 +196,11 @@ SECTIONS
   ._user_heap_stack (NOLOAD) :
   {
     . = ALIGN(8);
+    __heap_start = .;
+    . = . + _Min_Heap_Size;
+    __heap_end = .;
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
-    . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
@@ -207,9 +209,6 @@ SECTIONS
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {
-    libc.a:* ( * )
-    libm.a:* ( * )
-    libgcc.a:* ( * )
     *(.glue_7)         /* Discard ARM to Thumb interworking code */
     *(.glue_7t)        /* Discard Thumb to ARM interworking code */
     *(.eh_frame)       /* Discard generic DWARF exception frames */
@@ -229,4 +228,4 @@ ASSERT((ADDR(.isr_vector) % 512) == 0, "Vector table is not properly aligned");
 ASSERT((ADDR(.dma_buffers) % 32) == 0, "DMA section is not properly aligned");
 
 /* Heap and stack collision check */
-ASSERT((_end + _Min_Heap_Size + _Min_Stack_Size) <= __StackTop, "Heap and stack colision");
+ASSERT((_end + _Min_Heap_Size + _Min_Stack_Size) <= __stack, "Heap and stack colision");
