@@ -12,6 +12,7 @@ void SystemCoreClockUpdate(void)
 {
     uint32_t system_clock;
 
+    /* Check SYSCLOCK source. */
     switch (READ_BIT(RCC->CFGR, RCC_CFGR_SWS)) {
         case RCC_CFGR_SWS_HSE:
             system_clock = HSE_VALUE;
@@ -37,6 +38,7 @@ void SystemCoreClockUpdate(void)
             break;
     }
 
+    /* Write Clock value shifted by AHBPrescaller value. */
     SystemCoreClock = system_clock >> AHBPrescTable[READ_BIT(RCC->CFGR, RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos];
 
 }

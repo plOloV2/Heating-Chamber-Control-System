@@ -9,8 +9,8 @@
 /*
  * Clock tree:
  *   HSE        = 16 MHz
- *   PLL input  = HSE / 4 = 4 MHz
- *   PLL VCO    = 4 MHz * 84 = 336 MHz
+ *   PLL input  = HSE / 8 = 2 MHz
+ *   PLL VCO    = 2 MHz * 168 = 336 MHz
  *   SYSCLK     = VCO / 2 = 168 MHz
  *   PLL48CLK   = VCO / 7 = 48 MHz
  *   HCLK       = SYSCLK / 1 = 168 MHz
@@ -27,11 +27,13 @@ void reset_clock_tree(void);
 
 void SystemInit(void)
 {
+
 #if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
     SET_BIT(SCB->CPACR, (3UL << (10U * 2U)) | (3UL << (11U * 2U)));
     __DSB();
     __ISB();
 #endif
+
     SCB->VTOR = FLASH_BASE;
 
     reset_clock_tree();

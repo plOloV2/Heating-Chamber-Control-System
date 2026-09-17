@@ -2,13 +2,12 @@
 #include "./system_init.h"
 
 
-#define PLL_M 16UL
-#define PLL_N 336UL
+#define PLL_M 8UL
+#define PLL_N 168UL
 #define PLL_P 2UL
 #define PLL_Q 7UL
 
 
-/* Removed 'static' so rtc_init.c can use it */
 bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value)
 {
     uint32_t timeout = SystemCoreClock;
@@ -71,8 +70,8 @@ system_init_status_t configure_main_clock(void)
     /* Y1 is a crystal, not an externally driven clock. */
     CLEAR_BIT(RCC->CR, RCC_CR_HSEBYP);
     SET_BIT(RCC->CR, RCC_CR_HSEON);
-    if (wait_for_register_value(&RCC->CR, RCC_CR_HSERDY,
-                                RCC_CR_HSERDY) == 0U) {
+    if (wait_for_register_value(&RCC->CR, RCC_CR_HSERDY, RCC_CR_HSERDY) == 0U)
+    {
         CLEAR_BIT(RCC->CR, RCC_CR_HSEON);
         return SYSTEM_INIT_STATUS_HSE_TIMEOUT;
     }
@@ -83,21 +82,30 @@ system_init_status_t configure_main_clock(void)
     while (READ_BIT(FLASH->ACR, FLASH_ACR_LATENCY) != FLASH_ACR_LATENCY_5WS) {
     }
 
+    /* Set PLL dividers. */
     RCC->PLLCFGR = (PLL_M << RCC_PLLCFGR_PLLM_Pos) | (PLL_N << RCC_PLLCFGR_PLLN_Pos) |
                     (((PLL_P / 2UL) - 1UL) << RCC_PLLCFGR_PLLP_Pos) | RCC_PLLCFGR_PLLSRC_HSE |
                     (PLL_Q << RCC_PLLCFGR_PLLQ_Pos);
 
+    /* Set system prescallers. */
     MODIFY_REG(RCC->CFGR, RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2,
                 RCC_CFGR_HPRE_DIV1 | RCC_CFGR_PPRE1_DIV4 | RCC_CFGR_PPRE2_DIV2);
 
+    /* Wait for PLL to switch on. */
     SET_BIT(RCC->CR, RCC_CR_PLLON);
-    if (wait_for_register_value(&RCC->CR, RCC_CR_PLLRDY, RCC_CR_PLLRDY) == 0U) {
+    if (wait_for_register_value(&RCC->CR, RCC_CR_PLLRDY, RCC_CR_PLLRDY) == 0U)
+    {
         retain_hsi_clock();
         return SYSTEM_INIT_STATUS_PLL_TIMEOUT;
     }
 
+    /* Enabling Clock Security System. */
+    SET_BIT(RCC->CR, RCC_CR_CSSON);
+
+    /* Wait for SYSCLOCK to switch on. */
     MODIFY_REG(RCC->CFGR, RCC_CFGR_SW, RCC_CFGR_SW_PLL);
-    if (wait_for_register_value(&RCC->CFGR, RCC_CFGR_SWS, RCC_CFGR_SWS_PLL) == 0U) {
+    if (wait_for_register_value(&RCC->CFGR, RCC_CFGR_SWS, RCC_CFGR_SWS_PLL) == 0U)
+    {
         retain_hsi_clock();
         return SYSTEM_INIT_STATUS_SYSCLK_SWITCH_TIMEOUT;
     }
