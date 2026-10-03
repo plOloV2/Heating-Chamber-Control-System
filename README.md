@@ -12,7 +12,7 @@ For copilation you will need:
 
 - **CMake** version 4.1 or grater
 - **Ninja** (I used 1.13.2)
-- **Arm Toolchain for Embeded** version 22.1.0
+- **Arm Toolchain for Embeded** version 23.1.0
 
 You may need to edit `cmake/toolchain-llvm.cmake` file, as ATfE prefix will propably be different on your machine then on mine.
 
