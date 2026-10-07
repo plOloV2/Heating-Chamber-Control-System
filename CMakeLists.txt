@@ -45,6 +45,23 @@ add_custom_target(
     VERBATIM
 )
 
+# Set global CPU flags
+add_compile_options(${CPU_PARAMS})
+
+include(FetchContent)
+
+# Fetch FreeRTOS
+add_library(freertos_config INTERFACE)
+target_include_directories(freertos_config SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/middlewares/FreeRTOS)
+set(FREERTOS_PORT GCC_ARM_CM4F CACHE STRING "FreeRTOS Port" FORCE)
+
+FetchContent_Declare(
+    freertos_kernel
+    GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+    GIT_TAG        V11.3.1  # Lock to a specific release tag or commit hash here
+)
+FetchContent_MakeAvailable(freertos_kernel)
+
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME} ${sources_SRCS})
 
@@ -69,7 +86,6 @@ set(CMAKE_C_FLAGS_RELEASE           "-O3 -DNDEBUG -flto=auto")
 
 # Compiler options
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-    ${CPU_PARAMS}
     ${ERROR_FLAGS}
     -fstack-usage
     -ffreestanding
@@ -83,6 +99,9 @@ target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
     ${CPU_PARAMS}
     ${LINKER_FLAGS}
 )
+
+# Link against FreeRTOS 
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE freertos_kernel)
 
 # Set linker script as a dependency to force re-link if it changes
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_DEPENDS ${linker_script_SRC})
