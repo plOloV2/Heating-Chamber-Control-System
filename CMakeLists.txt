@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 4.1)
 
-project(aero_oven C ASM)
+project(aero_oven C)
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # Setup C compiler settings
@@ -45,16 +45,30 @@ add_custom_target(
     VERBATIM
 )
 
-# Set global CPU flags
-add_compile_options(${CPU_PARAMS})
+
+# Add global compilation flags
+set(GLOBAL_FLAG_C
+    -fstack-usage
+    -ffreestanding
+    -fno-stack-protector
+    -fno-builtin
+)
+
+# Set config flags
+set(CMAKE_C_FLAGS_DEBUG             "-Og -ggdb3")
+set(CMAKE_C_FLAGS_RELEASE           "-O3 -DNDEBUG -flto=auto")
+
+# Set global flags
+add_compile_options(${CPU_PARAMS} ${ERROR_FLAGS} ${GLOBAL_FLAG_C})
 
 include(FetchContent)
 
-# Fetch FreeRTOS
+# FreeRTOS config
 add_library(freertos_config INTERFACE)
 target_include_directories(freertos_config SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/middlewares/FreeRTOS)
 set(FREERTOS_PORT GCC_ARM_CM4F CACHE STRING "FreeRTOS Port" FORCE)
 
+# Fetch FreeRTOS
 FetchContent_Declare(
     freertos_kernel
     GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
@@ -79,18 +93,6 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     STM32F405xx
     HSE_VALUE=16000000UL
     LSE_VALUE=32768UL
-)
-
-set(CMAKE_C_FLAGS_DEBUG             "-Og -ggdb3")
-set(CMAKE_C_FLAGS_RELEASE           "-O3 -DNDEBUG -flto=auto")
-
-# Compiler options
-target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-    ${ERROR_FLAGS}
-    -fstack-usage
-    -ffreestanding
-    -fno-stack-protector
-    $<$<COMPILE_LANGUAGE:ASM>:-x -MP>
 )
 
 # Linker options

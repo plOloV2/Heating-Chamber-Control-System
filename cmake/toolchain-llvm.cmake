@@ -9,13 +9,13 @@ set(TOOLCHAIN_PREFIX                arm-)
 set(CPU_PARAMS                      -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard)
 
 # C comon flags
-set(FLAGS                           --target=arm-none-eabi -fdata-sections -ffunction-sections)
+set(FLAGS                           --target=arm-none-eabi -fdata-sections -ffunction-sections -pipe)
 
 # Error flags
 set(ERROR_FLAGS                     -Wall -Wextra -Werror)
 
 # Linker flags
-set(LINKER_FLAGS                   -fuse-ld=lld -Wl,--gc-sections,-Map=${CMAKE_PROJECT_NAME}.map,--print-memory-usage -nostartfiles)
+set(LINKER_FLAGS                    -fuse-ld=lld -Wl,--gc-sections,-Map=${CMAKE_PROJECT_NAME}.map,--print-memory-usage -nostartfiles)
 
 # Define compiler settings
 set(CMAKE_C_COMPILER                ${TOOLCHAIN_PREFIX}clang ${FLAGS})
