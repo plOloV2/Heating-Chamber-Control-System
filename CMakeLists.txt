@@ -14,6 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 # Sources
 set(sources_SRCS
     app/src/main.c
+    app/src/pin_opertion.c
     startup/startup_stm32f405.c
     platform/system_init.c
     platform/clock_init.c
@@ -72,7 +73,7 @@ set(FREERTOS_PORT GCC_ARM_CM4F CACHE STRING "FreeRTOS Port" FORCE)
 FetchContent_Declare(
     freertos_kernel
     GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
-    GIT_TAG        V11.3.1  # Lock to a specific release tag or commit hash here
+    GIT_TAG        V11.3.1  # Locked to a V11.3.1 version
 )
 FetchContent_MakeAvailable(freertos_kernel)
 
