@@ -20,8 +20,8 @@ set(LINKER_FLAGS                    -fuse-ld=lld -Wl,--gc-sections,-Map=${CMAKE_
 # Define compiler settings
 set(CMAKE_C_COMPILER                ${TOOLCHAIN_PREFIX}clang ${FLAGS})
 set(CMAKE_ASM_COMPILER              ${CMAKE_C_COMPILER})
-set(CMAKE_OBJCOPY                   ${TOOLCHAIN_PREFIX}llvm-objcopy)
-set(CMAKE_SIZE                      ${TOOLCHAIN_PREFIX}llvm-size)
+find_program(CMAKE_OBJCOPY          NAMES ${TOOLCHAIN_PREFIX}llvm-objcopy HINTS /usr/local/bin REQUIRED)
+find_program(CMAKE_SIZE             NAMES ${TOOLCHAIN_PREFIX}llvm-size    HINTS /usr/local/bin REQUIRED)
 
 # This will create .elf files
 set(CMAKE_EXECUTABLE_SUFFIX_ASM     ".elf")

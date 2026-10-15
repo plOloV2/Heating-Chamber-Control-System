@@ -3,21 +3,21 @@
 
 /**
  * @file pins_def.h
- * @brief Definicja wyjść/wejść GPIO z STM32.
- * 
+ * @brief Definition of STM32 GPIO inputs/outputs.
+ *
  * @details
- * Ten plik dostarcza definicje portów, pinów oraz stanów aktywnych dla wszystkich wyjść/wejść GPIO.
- * 
+ * This file provides definitions of ports, pins, and active states for all GPIO inputs/outputs.
+ *
  * @author Aleksander Dziągwa
  * @date 8.10.2026
  */
 
 
- /**
-  * @name Sieć FAN
-  * @brief Wyjście sterowania termoobiegiem.
-  * @{
-  */
+/**
+ * @name FAN Net
+ * @brief Fan control output.
+ * @{
+ */
 #define FAN_PORT        GPIOA
 #define FAN_PIN         0U
 #define FAN_ACTIVE      1U
@@ -25,11 +25,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć HEAT
-  * @brief Wyjście sterowania grzałkami.
-  * @{
-  */
+/**
+ * @name HEAT Net
+ * @brief Heater control output.
+ * @{
+ */
 #define HEAT_PORT       GPIOA
 #define HEAT_PIN        1U
 #define HEAT_ACTIVE     1U
@@ -37,66 +37,66 @@
 /** @} */
 
 
- /**
-  * @name Sieć BUZZER
-  * @brief Wyjście sterowania brzęczkiem.
-  * @{
-  */
+/**
+ * @name BUZZER Net
+ * @brief Buzzer PWM control output.
+ * @{
+ */
 #define BUZZ_PORT       GPIOA
 #define BUZZ_PIN        2U
 #define BUZZ_EXTI       2U
 /** @} */
 
 
- /**
-  * @name Sieć TEMP1
-  * @brief Wejście pomiaru temperatury nr.1.
-  * @{
-  */
+/**
+ * @name TEMP1 Net
+ * @brief Temperature measurement input No. 1.
+ * @{
+ */
 #define TEMP1_PORT      GPIOA
 #define TEMP1_PIN       4U
 #define TEMP1_EXTI      4U
 /** @} */
 
 
- /**
-  * @name Sieć TEMP2
-  * @brief Wejście pomiaru temperatury nr.2.
-  * @{
-  */
+/**
+ * @name TEMP2 Net
+ * @brief Temperature measurement input No. 2.
+ * @{
+ */
 #define TEMP2_PORT      GPIOA
 #define TEMP2_PIN       5U
 #define TEMP2_EXTI      5U
 /** @} */
 
 
- /**
-  * @name Sieć TEMP3
-  * @brief Wejście pomiaru temperatury nr.3.
-  * @{
-  */
+/**
+ * @name TEMP3 Net
+ * @brief Temperature measurement input No. 3.
+ * @{
+ */
 #define TEMP3_PORT      GPIOA
 #define TEMP3_PIN       6U
 #define TEMP3_EXTI      6U
 /** @} */
 
 
- /**
-  * @name Sieć TEMP4
-  * @brief Wejście pomiaru temperatury nr.4.
-  * @{
-  */
+/**
+ * @name TEMP4 Net
+ * @brief Temperature measurement input No. 4.
+ * @{
+ */
 #define TEMP4_PORT      GPIOA
 #define TEMP4_PIN       7U
 #define TEMP4_EXTI      7U
 /** @} */
 
 
- /**
-  * @name Sieć BACKLIGHT_SIGNAL
-  * @brief Wyjście sterowania podświetleniem ekranu.
-  * @{
-  */
+/**
+ * @name BACKLIGHT_SIGNAL Net
+ * @brief Display backlight control output.
+ * @{
+ */
 #define BLS_PORT        GPIOA
 #define BLS_PIN         15U
 #define BLS_ACTIVE      1U
@@ -104,11 +104,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć BUT1
-  * @brief Wejście z przycisku 1.
-  * @{
-  */
+/**
+ * @name BUT1 Net
+ * @brief Button 1 input.
+ * @{
+ */
 #define BUT1_PORT       GPIOB
 #define BUT1_PIN        0U
 #define BUT1_ACTIVE     1U
@@ -116,11 +116,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć BUT2
-  * @brief Wejście z przycisku 2.
-  * @{
-  */
+/**
+ * @name BUT2 Net
+ * @brief Button 2 input.
+ * @{
+ */
 #define BUT2_PORT       GPIOB
 #define BUT2_PIN        1U
 #define BUT2_ACTIVE     1U
@@ -128,11 +128,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć BUT3
-  * @brief Wejście z przycisku 3.
-  * @{
-  */
+/**
+ * @name BUT3 Net
+ * @brief Button 3 input.
+ * @{
+ */
 #define BUT3_PORT       GPIOB
 #define BUT3_PIN        2U
 #define BUT3_ACTIVE     1U
@@ -140,11 +140,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć BUT4
-  * @brief Wejście z przycisku 4.
-  * @{
-  */
+/**
+ * @name BUT4 Net
+ * @brief Button 4 input.
+ * @{
+ */
 #define BUT4_PORT       GPIOB
 #define BUT4_PIN        10U
 #define BUT4_ACTIVE     1U
@@ -152,11 +152,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć LED1
-  * @brief Wyjście na diode debug led 1.
-  * @{
-  */
+/**
+ * @name LED1 Net
+ * @brief Debug LED 1 output.
+ * @{
+ */
 #define LED1_PORT       GPIOC
 #define LED1_PIN        4U
 #define LED1_ACTIVE     1U
@@ -164,11 +164,11 @@
 /** @} */
 
 
- /**
-  * @name Sieć LED2
-  * @brief Wyjście na diode debug led 2.
-  * @{
-  */
+/**
+ * @name LED2 Net
+ * @brief Debug LED 2 output.
+ * @{
+ */
 #define LED2_PORT       GPIOC
 #define LED2_PIN        5U
 #define LED2_ACTIVE     1U
