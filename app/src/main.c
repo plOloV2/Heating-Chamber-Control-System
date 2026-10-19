@@ -3,11 +3,18 @@
 #include "error.h"
 #include "version.h"
 #include "pins_def.h"
-#include "pin_opertion.h"
+#include "pin_operation.h"
+
+
+#include "FreeRTOS.h"
+#include "task.h"
+
 
 
 volatile uint32_t iter = 0;
 volatile system_error_t SystemStatus = NO_ERROR;
+
+void create_blink(void);
 
 
 __attribute__((noreturn)) int main(){
@@ -20,10 +27,15 @@ __attribute__((noreturn)) int main(){
 
     set_pin(LED1_PORT, LED1_PIN, LED1_ACTIVE);
 
-    while(true){
+    create_blink();
 
-        iter++;
+    vTaskStartScheduler();
 
+    SystemStatus |= RTOS_ERROR;
+
+    while(true)
+    {
+        __NOP();
     }
 
 }

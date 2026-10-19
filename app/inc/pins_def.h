@@ -94,13 +94,13 @@
 
 /**
  * @name BACKLIGHT_SIGNAL Net
- * @brief Display backlight control output.
+ * @brief Display backlight control output. On B revision changed to pin PA15!
  * @{
  */
 #define BLS_PORT        GPIOA
-#define BLS_PIN         15U
+#define BLS_PIN         9U
 #define BLS_ACTIVE      1U
-#define BLS_EXTI        15U
+#define BLS_EXTI        9U
 /** @} */
 
 
@@ -158,9 +158,9 @@
  * @{
  */
 #define LED1_PORT       GPIOC
-#define LED1_PIN        4U
+#define LED1_PIN        5U
 #define LED1_ACTIVE     1U
-#define LED1_EXTI       4U
+#define LED1_EXTI       5U
 /** @} */
 
 
@@ -170,9 +170,9 @@
  * @{
  */
 #define LED2_PORT       GPIOC
-#define LED2_PIN        5U
+#define LED2_PIN        4U
 #define LED2_ACTIVE     1U
-#define LED2_EXTI       5U
+#define LED2_EXTI       4U
 /** @} */
 
 #endif

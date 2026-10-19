@@ -177,7 +177,12 @@ SECTIONS
   PROVIDE( __non_tls_bss_start = ADDR(.bss) );
 
 
-  /* Required by Picolibc's ARM _set_tls implementation. */
+  /* Required by Picolibc TLS and FreeRTOS static task allocation */
+  PROVIDE(__tls_start = SIZEOF(.tdata) ? ADDR(.tdata) : ADDR(.tbss));
+  PROVIDE(__tls_size = __tls_end - __tls_start);
+  PROVIDE(__tdata_size = SIZEOF(.tdata));
+  PROVIDE(__tbss_offset = ADDR(.tbss) - __tls_start);
+  PROVIDE(__tbss_size = SIZEOF(.tbss));
   PROVIDE(__tls_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss)));
   PROVIDE(__arm32_tls_tcb_offset = MAX(8, __tls_align));
 

@@ -10,7 +10,8 @@ typedef enum {
     SYSTEM_INIT_ERROR = 1U << 0,
     RTC_DATE_ERROR = 1U << 1,
     LCD_INIT_ERROR = 1U << 2,
-    SD_CARD_INIT_ERROR = 1U << 3
+    SD_CARD_INIT_ERROR = 1U << 3,
+    RTOS_ERROR = 1U << 4
 } system_error_t;
 
 extern volatile system_error_t SystemStatus;

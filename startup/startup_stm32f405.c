@@ -132,7 +132,7 @@ void WEAK OTG_HS_EP1_OUT_IRQHandler(void);
 void WEAK OTG_HS_EP1_IN_IRQHandler(void);
 void WEAK OTG_HS_WKUP_IRQHandler(void);
 void WEAK OTG_HS_IRQHandler(void);
-void WEAK HASH_RNG_IRQHandler(void);
+void WEAK RNG_IRQHandler(void);
 void WEAK FPU_IRQHandler(void);
 
 __attribute__((section(".isr_vector"), used, aligned(512)))
@@ -236,12 +236,14 @@ void (* const g_pfnVectors[])(void) =
     OTG_HS_IRQHandler,                 /* USB OTG HS */
     0,                                 /* Reserved */
     0,                                 /* Reserved */
-    HASH_RNG_IRQHandler,               /* Hash and Rng */
+    RNG_IRQHandler,                    /* Hash and Rng */
     FPU_IRQHandler                     /* FPU */
 };
 
+
 _Static_assert((sizeof(g_pfnVectors) / sizeof(g_pfnVectors[0])) == 98U,
                "Unexpected STM32F405 vector-table length");
+
 
 void Default_Handler(void)
 {
@@ -250,6 +252,7 @@ void Default_Handler(void)
         __NOP();
     }
 }
+
 
 void Reset_Handler(void)
 {

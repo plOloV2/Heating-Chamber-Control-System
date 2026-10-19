@@ -14,11 +14,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 # Sources
 set(sources_SRCS
     app/src/main.c
-    app/src/pin_opertion.c
+    app/src/pin_operation.c
+    app/src/tasks/blink.c
     startup/startup_stm32f405.c
     platform/system_init.c
     platform/clock_init.c
+    platform/clock_info.c
+    platform/gpio_init.c
     platform/rtc_init.c
+    middlewares/FreeRTOS/vApplicationStackOverflowHook.c
 )
 
 # Include directories

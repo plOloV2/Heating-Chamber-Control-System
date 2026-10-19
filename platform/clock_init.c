@@ -10,11 +10,13 @@
 
 bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value)
 {
-    uint32_t timeout = SystemCoreClock;
+    uint32_t timeout = SystemCoreClock / 2;
     while (((*register_address & mask) != expected_value) && (timeout != 0U)) {
         --timeout;
     }
+
     return ((*register_address & mask) == expected_value);
+
 }
 
 static void retain_hsi_clock(void)

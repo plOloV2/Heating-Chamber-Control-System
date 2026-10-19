@@ -1,7 +1,7 @@
 #include "stm32f4xx.h"
 #include "./system_init.h"
 
-/* Define your magic number for the backup register */
+/* Define magic number for the backup register */
 #define RTC_MAGIC_NUMBER ((uint32_t)0x0F0690F0)
 
 
@@ -19,11 +19,11 @@ system_init_status_t configure_rtc_clock(void)
 
     /* 
      * If the magic number is present, the RTC was kept alive by the battery.
-     * We can skip hardware initialization and exit immediately.
+     * Code can skip hardware initialization and exit immediately.
      */
-    if (RTC->BKP0R == RTC_MAGIC_NUMBER)
+    if(RTC->BKP0R == RTC_MAGIC_NUMBER)
     {
-        if (previous_dbp == 0U) 
+        if(previous_dbp == 0U) 
         {
             CLEAR_BIT(PWR->CR, PWR_CR_DBP);
         }
@@ -36,20 +36,20 @@ system_init_status_t configure_rtc_clock(void)
      * when a different source is already selected; normal resets then retain
      * the RTC calendar and backup registers.
      */
-    if ((READ_BIT(RCC->BDCR, RCC_BDCR_RTCSEL) != RCC_BDCR_RTCSEL_0) && (READ_BIT(RCC->BDCR, RCC_BDCR_RTCSEL) != 0U))
+    if((READ_BIT(RCC->BDCR, RCC_BDCR_RTCSEL) != RCC_BDCR_RTCSEL_0) && (READ_BIT(RCC->BDCR, RCC_BDCR_RTCSEL) != 0U))
     {
         SET_BIT(RCC->BDCR, RCC_BDCR_BDRST);
         CLEAR_BIT(RCC->BDCR, RCC_BDCR_BDRST);
     }
 
     /* LSEBYP may only be changed while the LSE clock is disabled. */
-    if (READ_BIT(RCC->BDCR, RCC_BDCR_LSEBYP) != 0U)
+    if(READ_BIT(RCC->BDCR, RCC_BDCR_LSEBYP) != 0U)
     {
         CLEAR_BIT(RCC->BDCR, RCC_BDCR_LSEON);
-        if (!wait_for_register_value(&RCC->BDCR, RCC_BDCR_LSERDY, 0U))
+        if(!wait_for_register_value(&RCC->BDCR, RCC_BDCR_LSERDY, 0U))
         {
             CLEAR_BIT(RCC->BDCR, RCC_BDCR_RTCEN);
-            if (previous_dbp == 0U)
+            if(previous_dbp == 0U)
             {
                 CLEAR_BIT(PWR->CR, PWR_CR_DBP);
             }
@@ -62,12 +62,12 @@ system_init_status_t configure_rtc_clock(void)
 
     SET_BIT(RCC->BDCR, RCC_BDCR_LSEON);
     
-    /* Fix: Check against false instead of 0U */
-    if (!wait_for_register_value(&RCC->BDCR, RCC_BDCR_LSERDY, RCC_BDCR_LSERDY))
+    /* Check against false instead of 0U */
+    if(!wait_for_register_value(&RCC->BDCR, RCC_BDCR_LSERDY, RCC_BDCR_LSERDY))
     {
         CLEAR_BIT(RCC->BDCR, RCC_BDCR_RTCEN | RCC_BDCR_LSEON);
 
-        if (previous_dbp == 0U)
+        if(previous_dbp == 0U)
         {
             CLEAR_BIT(PWR->CR, PWR_CR_DBP);
         }
@@ -78,10 +78,11 @@ system_init_status_t configure_rtc_clock(void)
     MODIFY_REG(RCC->BDCR, RCC_BDCR_RTCSEL, RCC_BDCR_RTCSEL_0);
     SET_BIT(RCC->BDCR, RCC_BDCR_RTCEN);
 
-    if (previous_dbp == 0U)
+    if(previous_dbp == 0U)
     {
         CLEAR_BIT(PWR->CR, PWR_CR_DBP);
     }
 
     return SYSTEM_INIT_STATUS_OK;
+
 }
