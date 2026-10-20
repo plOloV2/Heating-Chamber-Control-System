@@ -1,9 +1,6 @@
 #ifndef SYSTEM_INIT_H
 #define SYSTEM_INIT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifndef HSI_VALUE
     #define HSI_VALUE 16'000'000UL
@@ -19,8 +16,5 @@ extern "C" {
 
 #include "system_init_error.h"
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

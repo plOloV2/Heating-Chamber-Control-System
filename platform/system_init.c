@@ -23,7 +23,7 @@ volatile system_init_status_t SystemInitStatus = SYSTEM_INIT_STATUS_OK;
 
 system_init_status_t configure_main_clock(void);
 system_init_status_t configure_rtc_clock(void);
-system_init_status_t configure_gpio(void);
+void configure_gpio(void);
 void SystemCoreClockUpdate(void);
 void reset_clock_tree(void);
 
@@ -45,10 +45,10 @@ void SystemInit(void)
 
     const system_init_status_t rtc_clock_status = configure_rtc_clock();
 
-    const system_init_status_t gpio_status = configure_gpio();
+    configure_gpio();
 
     NVIC_SetPriorityGrouping(0U);
     
-    SystemInitStatus = (system_init_status_t)((uint32_t)main_clock_status | (uint32_t)rtc_clock_status | (uint32_t)gpio_status);
+    SystemInitStatus = (system_init_status_t)((uint32_t)main_clock_status | (uint32_t)rtc_clock_status);
     
 }

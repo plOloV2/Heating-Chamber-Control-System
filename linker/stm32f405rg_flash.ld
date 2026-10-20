@@ -1,10 +1,20 @@
-/* @Author: Aleksander Dziagwa */
+/**
+ * @file stm32f405rg_flash.ld
+ * @brief Main linker script.
+ *
+ * @details
+ * This script controlls code and data placement in flash and ram during linking.
+ *
+ * @author Aleksander Dziągwa
+ * @date 23.08.2026
+ */
+
 
 /* Memories definition */
 MEMORY
 {
   RAM     (xrw)   : ORIGIN = 0x20000000, LENGTH = 128K
-  CCMRAM  (xrw)   : ORIGIN = 0x10000000, LENGTH = 64K
+  CCMRAM  (rw)    : ORIGIN = 0x10000000, LENGTH = 64K
   FLASH   (rx)    : ORIGIN = 0x08000000, LENGTH = 1024K
 }
 

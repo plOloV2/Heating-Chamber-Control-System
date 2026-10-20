@@ -1,3 +1,14 @@
+/**
+ * @file clock_init.c
+ * @brief Implementation of system core clock initialization.
+ *
+ * @details
+ * This file holds implementation of functions used to .
+ *
+ * @author Aleksander Dziągwa
+ * @date 20.10.2026
+ */
+
 #include "stm32f4xx.h"
 #include "./system_init.h"
 

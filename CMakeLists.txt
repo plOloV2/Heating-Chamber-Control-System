@@ -15,7 +15,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 set(sources_SRCS
     app/src/main.c
     app/src/pin_operation.c
-    app/src/tasks/blink.c
+    app/src/RTOS/blink.c
+    app/src/RTOS/buzzer_task.c
+    app/src/RTOS/create_tasks.c
     startup/startup_stm32f405.c
     platform/system_init.c
     platform/clock_init.c

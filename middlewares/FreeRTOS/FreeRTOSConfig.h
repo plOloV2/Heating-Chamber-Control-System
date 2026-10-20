@@ -40,6 +40,15 @@
  * See http://www.freertos.org/a00110.html
  *----------------------------------------------------------*/
 
+
+ /**
+  * Modyfied by @author Aleksander Dziągwa
+  * @date 20.10.2026 
+  * 
+  * @brief FreeRTOS in this project is configured with static alocation only. 
+  */
+
+
 #include <stdint.h>
 extern uint32_t SystemCoreClock;
 

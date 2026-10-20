@@ -1,9 +1,9 @@
 /**
- * *****************************************************************************
+ *
  * @file        startup_stm32f405.c
  * @brief       STM32F405xx Devices vector table for ATfE based toolchains.
  * @author      Aleksander Dziągwa
- * *****************************************************************************
+ * 
  */
 
 #include <stdint.h>

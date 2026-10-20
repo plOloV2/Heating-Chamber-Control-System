@@ -16,7 +16,7 @@
 #define GPIO_MODE_ANALOG            3U
 
 
-system_init_status_t configure_gpio(void)
+void configure_gpio(void)
 {
 
     /** Enables AHB clock for GPIOA, GPIOB and GPIOC. */
@@ -80,9 +80,5 @@ system_init_status_t configure_gpio(void)
                GPIO_FIELD_MASK(LED1_PIN) | GPIO_FIELD_MASK(LED2_PIN),
                GPIO_FIELD_VAL(LED1_PIN, GPIO_MODE_OUTPUT) |
                GPIO_FIELD_VAL(LED2_PIN, GPIO_MODE_OUTPUT));
-
-    
-
-    return SYSTEM_INIT_STATUS_OK;
 
 }
