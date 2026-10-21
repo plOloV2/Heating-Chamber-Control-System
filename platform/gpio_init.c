@@ -1,21 +1,34 @@
+/**
+ * @file gpio_init.c
+ * @brief Implementation of GPIO pins initialization.
+ *
+ * @details
+ * This file holds implementation of functions used to configure GPIO pins.
+ *
+ * @author Aleksander Dziągwa
+ * @date 20.10.2026
+ */
+
 #include "stm32f4xx.h"
 #include "pins_def.h"
 #include "./system_init_error.h"
 
 
-
+/** @brief Helper makro for BSR register manipulation */
 #define GPIO_BSRR_INACTIVE(pin, active_state) (((active_state) != 0U) ? (1UL << ((pin) + 16U)) : (1UL << (pin)))
 
+/** @brief Helper makros for register manipulation */
 #define GPIO_FIELD_MASK(pin)        (3UL << ((pin) * 2U))
 #define GPIO_FIELD_VAL(pin, val)    ((uint32_t)(val) << ((pin) * 2U))
 
-
+/** @brief GPIO pins functions */
 #define GPIO_MODE_INPUT             0U
 #define GPIO_MODE_OUTPUT            1U
 #define GPIO_MODE_AF                2U
 #define GPIO_MODE_ANALOG            3U
 
 
+/** @brief Configure AHB clock and GPIO registers */
 void configure_gpio(void)
 {
 

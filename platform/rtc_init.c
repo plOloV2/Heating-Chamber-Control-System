@@ -1,3 +1,15 @@
+/**
+ * @file rtc_init.c
+ * @brief Implementation of RTC clock initialization.
+ *
+ * @details
+ * This file holds implementation of functions used to configure RTC clock.
+ *
+ * @author Aleksander Dziągwa
+ * @date 20.10.2026
+ */
+
+
 #include "stm32f4xx.h"
 #include "./system_init.h"
 
@@ -7,7 +19,13 @@
 
 bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value);
 
-
+/**
+ * @brief Configure LSE oscillator as the RTC clock source and enable the RTC
+ *        clock if not already initialized in the backup domain
+ * 
+ * @return SYSTEM_INIT_STATUS_OK when RTC clock is already active or configured
+ *         successfully, otherwise returns SYSTEM_INIT_STATUS_LSE_TIMEOUT
+ */
 system_init_status_t configure_rtc_clock(void)
 {
     const uint32_t previous_dbp = READ_BIT(PWR->CR, PWR_CR_DBP);

@@ -1,6 +1,13 @@
 /**
  * @file system_init.c
- * @brief STM32F405RG system clock and RTC clock initialization.
+ * @brief Implementation whole system initialization.
+ *
+ * @details
+ * This file holds implementation of main function used to configure MCU.
+ * This function calls other functions from /platform directory.
+ *
+ * @author Aleksander Dziągwa
+ * @date 20.10.2026
  */
 
 #include "stm32f4xx.h"
@@ -27,14 +34,16 @@ void configure_gpio(void);
 void SystemCoreClockUpdate(void);
 void reset_clock_tree(void);
 
+
+/** @brief Main configuration function, calls function from other _init.c files and configures MCU. */
 void SystemInit(void)
 {
 
-#if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
-    SET_BIT(SCB->CPACR, (3UL << (10U * 2U)) | (3UL << (11U * 2U)));
-    __DSB();
-    __ISB();
-#endif
+    #if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
+        SET_BIT(SCB->CPACR, (3UL << (10U * 2U)) | (3UL << (11U * 2U)));
+        __DSB();
+        __ISB();
+    #endif
 
     SCB->VTOR = FLASH_BASE;
 

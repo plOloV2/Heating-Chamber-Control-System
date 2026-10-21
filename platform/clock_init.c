@@ -3,7 +3,7 @@
  * @brief Implementation of system core clock initialization.
  *
  * @details
- * This file holds implementation of functions used to .
+ * This file holds implementation of functions used to configure main system clock.
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026
@@ -13,12 +13,22 @@
 #include "./system_init.h"
 
 
+/** PLL config */
 #define PLL_M 8UL
 #define PLL_N 168UL
 #define PLL_P 2UL
 #define PLL_Q 7UL
 
 
+/** 
+ * @brief Wait ~4s for register to reach expected value
+ * 
+ * @param register_address  address to register
+ * @param mask              mask used when checkig
+ * @param expected_value    value for register to reach
+ * 
+ * @return TRUE when register equals expected_value before timout, otherwise returns FALSE
+ */
 bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value)
 {
     uint32_t timeout = SystemCoreClock / 2;
@@ -30,6 +40,10 @@ bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t
 
 }
 
+/**
+ * @brief Revert system clock to HSI and reset bus prescalers and Flash latency
+ *        after a clock configuration failure
+ */
 static void retain_hsi_clock(void)
 {
     MODIFY_REG(RCC->CFGR, RCC_CFGR_SW, RCC_CFGR_SW_HSI);
@@ -47,6 +61,10 @@ static void retain_hsi_clock(void)
 
 }
 
+/**
+ * @brief Switch system clock to HSI, disable HSE and PLLs, and reset RCC
+ *        configuration and interrupt registers to default values
+ */
 void reset_clock_tree(void)
 {
     /* HSI is the safe clock used while the PLL is reconfigured. */
@@ -73,6 +91,14 @@ void reset_clock_tree(void)
     
 }
 
+/**
+ * @brief Configure Flash latency, bus prescalers, HSE, and main PLL to run
+ *        the system clock at 168 MHz
+ * 
+ * @return SYSTEM_INIT_STATUS_OK when main clock is configured successfully,
+ *         otherwise returns specific timeout status (SYSTEM_INIT_STATUS_HSE_TIMEOUT,
+ *         SYSTEM_INIT_STATUS_PLL_TIMEOUT, or SYSTEM_INIT_STATUS_SYSCLK_SWITCH_TIMEOUT)
+ */
 system_init_status_t configure_main_clock(void)
 {
     /* Scale 1 is required for operation at 168 MHz. */
