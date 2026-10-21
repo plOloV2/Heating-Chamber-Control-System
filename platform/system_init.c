@@ -56,7 +56,7 @@ void SystemInit(void)
 
     configure_gpio();
 
-    NVIC_SetPriorityGrouping(0U);
+    NVIC_SetPriorityGrouping(7U - __NVIC_PRIO_BITS);
     
     SystemInitStatus = (system_init_status_t)((uint32_t)main_clock_status | (uint32_t)rtc_clock_status);
     

@@ -25,6 +25,10 @@ set(sources_SRCS
     platform/gpio_init.c
     platform/rtc_init.c
     middlewares/FreeRTOS/vApplicationStackOverflowHook.c
+    middlewares/FatFs/source/diskio.c
+    middlewares/FatFs/source/ff.c
+    middlewares/FatFs/source/ffsystem.c
+    middlewares/FatFs/source/ffunicode.c
 )
 
 # Include directories
@@ -32,6 +36,7 @@ set(include_DIRS
     app/inc
     CMSIS/Core/Include
     CMSIS/Device/Include
+    middlewares/FatFs/include
 )
 
 # Linker script
