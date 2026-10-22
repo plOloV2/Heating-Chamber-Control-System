@@ -10,7 +10,8 @@
  */
 
 #include "stm32f4xx.h"
-#include "pins_def.h"
+#include "AF_pins_def.h"
+#include "GPIO_pins_def.h"
 #include "./system_init_error.h"
 
 

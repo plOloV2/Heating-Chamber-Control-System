@@ -1,8 +1,8 @@
-#ifndef PINS_DEF_H
-#define PINS_DEF_H
+#ifndef GPIO_PINS_DEF_H
+#define GPIO_PINS_DEF_H
 
 /**
- * @file pins_def.h
+ * @file GPIO_pins_def.h
  * @brief Definition of STM32 GPIO inputs/outputs.
  *
  * @details
@@ -34,17 +34,6 @@
 #define HEAT_PIN        1U
 #define HEAT_ACTIVE     1U
 #define HEAT_EXTI       1U
-/** @} */
-
-
-/**
- * @name BUZZER Net
- * @brief Buzzer PWM control output.
- * @{
- */
-#define BUZZ_PORT       GPIOA
-#define BUZZ_PIN        2U
-#define BUZZ_EXTI       2U
 /** @} */
 
 
@@ -153,6 +142,18 @@
 
 
 /**
+ * @name LED2 Net
+ * @brief Debug LED 2 output.
+ * @{
+ */
+#define LED2_PORT       GPIOC
+#define LED2_PIN        4U
+#define LED2_ACTIVE     1U
+#define LED2_EXTI       4U
+/** @} */
+
+
+/**
  * @name LED1 Net
  * @brief Debug LED 1 output.
  * @{
@@ -165,14 +166,26 @@
 
 
 /**
- * @name LED2 Net
- * @brief Debug LED 2 output.
+ * @name LCD_INT Net
+ * @brief Interrupt signal from device to the system.
  * @{
  */
-#define LED2_PORT       GPIOC
-#define LED2_PIN        4U
-#define LED2_ACTIVE     1U
-#define LED2_EXTI       4U
+#define LCD_INT_PORT       GPIOC
+#define LCD_INT_PIN        6U
+#define LCD_INT_ACTIVE     0U
+#define LCD_INT_EXTI       6U
+/** @} */
+
+
+/**
+ * @name LCD_RST Net
+ * @brief LCD Reset / Power down signal.
+ * @{
+ */
+#define LCD_RST_PORT       GPIOC
+#define LCD_RST_PIN        7U
+#define LCD_RST_ACTIVE     0U
+#define LCD_RST_EXTI       7U
 /** @} */
 
 #endif
