@@ -11,7 +11,8 @@
 
 
 #include "stm32f4xx.h"
-#include "./system_init.h"
+#include "system_clocks.h"
+#include "system_state/system_init_error.h"
 
 /* Define magic number for the backup register */
 #define RTC_MAGIC_NUMBER ((uint32_t)0x0F0690F0)

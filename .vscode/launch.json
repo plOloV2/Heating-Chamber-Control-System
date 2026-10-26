@@ -16,7 +16,10 @@
             "executable": "${workspaceFolder}/build/Debug/aero_oven.elf",
             "device": "STM32F405RG",
             "configFiles": ["${workspaceFolder}/tools/openocd/stm32f405_stlink.cfg"],
-            "runToEntryPoint": "main"
+            "runToEntryPoint": "main",
+            "postLaunchCommands": [
+                "compare-sections"
+            ]
         },
         {
             "name": "Attach_st-link",
@@ -41,7 +44,10 @@
             "svdFile": "${workspaceFolder}/STM32F405.svd",
             "gdbPath": "arm-none-eabi-gdb",
             "executable": "${workspaceFolder}/build/Debug/aero_oven.elf",
-            "runToEntryPoint": "main"
+            "runToEntryPoint": "main",
+            "postLaunchCommands": [
+                "compare-sections"
+            ]
         },
         {
             "name": "Attach_BMP",

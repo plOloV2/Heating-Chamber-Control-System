@@ -10,7 +10,8 @@
  */
 
 #include "stm32f4xx.h"
-#include "./system_init.h"
+#include "system_clocks.h"
+#include "system_state/system_init_error.h"
 
 extern uint32_t SystemCoreClock;
 

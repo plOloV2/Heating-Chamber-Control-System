@@ -1,10 +1,10 @@
 #include "stm32f405xx.h"
 
-#include "../../platform/system_init.h"
-#include "error.h"
+#include "system_state/system_init_error.h"
+#include "system_state/error.h"
 #include "version.h"
 #include "GPIO_pins_def.h"
-#include "pin_operation.h"
+#include "drivers/pin_operation.h"
 
 
 #include "FreeRTOS.h"

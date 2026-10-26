@@ -1,82 +1,71 @@
 #include <stdint.h>
-
+#include "mem_location.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #define LUT_START_TEMP  -30
 #define LUT_END_TEMP    200
 #define LUT_STEP        5
 #define LUT_SIZE ((LUT_END_TEMP - LUT_START_TEMP) / LUT_STEP + 1)
-const float LUT_R[LUT_SIZE] = {
-    882.22f,    // -30
-    901.92f,    // -25
-    921.6f,     // -20
-    941.24f,    // -15
-    960.86f,    // -10
-    980.44f,    // -5
-    1000.0f,    // 0
-    1019.53f,   // 5
-    1039.03f,   // 10
-    1058.49f,   // 15
-    1077.94f,   // 20
-    1097.35f,   // 25
-    1116.73f,   // 30
-    1136.08f,   // 35
-    1155.41f,   // 40
-    1174.7f,    // 45
-    1193.97f,   // 50
-    1213.21f,   // 55
-    1232.42f,   // 60
-    1251.6f,    // 65
-    1270.75f,   // 70
-    1289.87f,   // 75
-    1308.97f,   // 80 
-    1328.03f,   // 85
-    1347.07f,   // 90
-    1366.08f,   // 95
-    1385.05f,   // 100
-    1404.0f,    // 105
-    1422.93f,   // 110
-    1441.82f,   // 115
-    1460.68f,   // 120
-    1479.51f,   // 125
-    1498.32f,   // 130
-    1517.1f,    // 135
-    1535.84f,   // 140
-    1554.56f,   // 145
-    1573.25f,   // 150
-    1591.91f,   // 155
-    1610.54f,   // 160
-    1629.15f,   // 165
-    1647.72f,   // 170
-    1666.27f,   // 175
-    1684.78f,   // 180
-    1703.27f,   // 185
-    1721.73f,   // 190
-    1740.16f,   // 195
-    1758.56f    // 200
+const float LUT_ADC[LUT_SIZE] = {
+    870.879,        // -30 C
+    943.809,        // -25 C
+    1014.873,       // -20 C
+    1084.071,       // -15 C
+    1151.543,       // -10 C
+    1217.287,       // -5 C
+    1281.433,       // 0 C
+    1344.006,       // 5 C
+    1405.064,       // 10 C
+    1464.630,       // 15 C
+    1522.847,       // 20 C
+    1579.674,       // 25 C
+    1635.187,       // 30 C
+    1689.431,       // 35 C
+    1742.476,       // 40 C
+    1794.309,       // 45 C
+    1845.022,       // 50 C
+    1894.625,       // 55 C
+    1943.155,       // 60 C
+    1990.646,       // 65 C
+    2037.130,       // 70 C
+    2082.639,       // 75 C
+    2127.226,       // 80 C
+    2170.874,       // 85 C
+    2213.657,       // 90 C
+    2255.577,       // 95 C
+    2296.639,       // 100 C
+    2336.911,       // 105 C
+    2376.415,       // 110 C
+    2415.134,       // 115 C
+    2453.108,       // 120 C
+    2490.360,       // 125 C
+    2526.929,       // 130 C
+    2562.815,       // 135 C
+    2598.018,       // 140 C
+    2632.594,       // 145 C
+    2666.540,       // 150 C
+    2699.875,       // 155 C
+    2732.614,       // 160 C
+    2764.790,       // 165 C
+    2796.384,       // 170 C
+    2827.445,       // 175 C
+    2857.952,       // 180 C
+    2887.953,       // 185 C
+    2917.445,       // 190 C
+    2946.440,       // 195 C
+    2974.950,       // 200 C
 };
 
-float LUT_ADC[LUT_SIZE];
-
-/** @brief Calculates raw ADC values from LUT_R. */
-static void init_PT1000_LUT() {
-    for (int i = 0; i < LUT_SIZE; i++) {
-        float R = LUT_R[i];
-        
-        float K = R / 680.0f;
-        
-        // Calculate expected voltage ratio (0.0 to 1.0)
-        float V = 1.65f * ((K - 1.0f) / (K + 1.0f));
-        
-        LUT_ADC[i] = V * 4096.0f;
-    }
-}
 
 /** @brief Uses LUT_ADC to convert raw ADC value to Celsius. */
-static float Look_Up_Table_Calc(uint32_t raw_value) {
+__attribute__((unused)) static float Look_Up_Table_Calc(uint16_t raw_value){
 
-    if (raw_value <= LUT_ADC[0]) {
+    float ADC_read = (float)raw_value;
+
+    if(ADC_read <= LUT_ADC[0]){
         return LUT_START_TEMP;
-    } else if (raw_value >= LUT_ADC[LUT_SIZE - 1]) {
+    }else if(ADC_read >= LUT_ADC[LUT_SIZE - 1]){
         return LUT_END_TEMP;
     }
 
@@ -87,7 +76,7 @@ static float Look_Up_Table_Calc(uint32_t raw_value) {
     while (low < high - 1) {
         int mid = low + (high - low) / 2; 
 
-        if (raw_value >= LUT_ADC[mid]) {
+        if (ADC_read >= LUT_ADC[mid]) {
             low = mid; 
         } else {
             high = mid; 
@@ -102,14 +91,25 @@ static float Look_Up_Table_Calc(uint32_t raw_value) {
     float t_high = t_low + LUT_STEP;
 
     // Linear Interpolation Formula
-    float temperature = t_low + (raw_value - r_low) * ((t_high - t_low) / (r_high - r_low));
+    float temperature = t_low + (ADC_read - r_low) * ((t_high - t_low) / (r_high - r_low));
     
     return temperature;
     
 }
 
 void vTempTask(void *pvParameters){
+    (void)pvParameters;
 
-    init_PT1000_LUT();
+    for (;;)
+    {
+        /* Suspend self until waken up / resumed */
+        vTaskSuspend(NULL);
+
+        // for(size_t i = 0; i < NUM_PT1000; i++)
+        // {
+            
+        // }
+
+    }
 
 }

@@ -201,8 +201,8 @@ SECTIONS
   .dma_buffers (NOLOAD) : ALIGN(32)
   {
     . = ALIGN(32);
-    *(.dma_buffers)
-    *(.dma_buffers*)
+    KEEP(*(.dma_buffers))
+    KEEP(*(.dma_buffers*))
     . = ALIGN(32);
   } >RAM
 

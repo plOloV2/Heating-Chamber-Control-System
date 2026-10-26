@@ -1,18 +1,48 @@
-#include "RTOS/RTOS_tasks.h"
+/**
+ * @file create_tasks.c
+ * @brief Static creation of all FreeRTOS tasks.
+ *
+ * @author Aleksander Dziągwa
+ * @date 20.10.2026
+ */
 
+#include "RTOS/buzzer_task.h"
+#include "RTOS/temp_task.h"
+#include "mem_location.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
+
+/* Static memory allocation for Buzzer task */
+CCMRAM_BSS TaskHandle_t xBuzzerTaskHandle = NULL;
+CCMRAM_BSS static StaticTask_t xBuzzerTaskTCB;
+CCMRAM_BSS static StackType_t  xBuzzerTaskStack[BUZZER_TASK_STACK_SIZE];
+
+/* Static memory allocation for Temp task */
+CCMRAM_BSS TaskHandle_t xTempTaskHandle = NULL;
+CCMRAM_BSS static StaticTask_t xTempTaskTCB;
+CCMRAM_BSS static StackType_t  xTempTaskStack[TEMP_TASK_STACK_SIZE];
+
 void create_tasks(void){
 
-    xTaskCreateStatic(
-        vBlinkTask,
-        "Blink",
-        BLINK_TASK_STACK_SIZE,
+    xBuzzerTaskHandle = xTaskCreateStatic(
+        vBuzzerTask,
+        "Buzzer",
+        BUZZER_TASK_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY + 2U,
+        xBuzzerTaskStack,
+        &xBuzzerTaskTCB
+    );
+
+    xTempTaskHandle = xTaskCreateStatic(
+        vTempTask,
+        "Temp converter",
+        TEMP_TASK_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY + 1U,
-        xBlinkTaskStack,
-        &xBlinkTaskTCB
+        xTempTaskStack,
+        &xTempTaskTCB
     );
 
 }

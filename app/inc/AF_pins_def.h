@@ -22,7 +22,7 @@
  */
 #define BUZZ_PORT       GPIOA
 #define BUZZ_PIN        2U
-#define BUZZ_AF         2U
+#define BUZZ_AF         1U
 #define BUZZ_EXTI       2U
 /** @} */
 

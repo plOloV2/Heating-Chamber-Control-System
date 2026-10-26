@@ -83,7 +83,8 @@
 
 /**
  * @name BACKLIGHT_SIGNAL Net
- * @brief Display backlight control output. On B revision changed to pin PA15!
+ * @brief Display backlight control output.
+ * @details On rev. A this signal is connected to PA9, on rev. B changed to PA15.
  * @{
  */
 #define BLS_PORT        GPIOA
