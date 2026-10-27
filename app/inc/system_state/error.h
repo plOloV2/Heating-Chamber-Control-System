@@ -39,6 +39,7 @@ typedef enum {
 /** @brief Main system_error_t status declared in main.c */
 extern volatile system_error_t SystemStatus;
 
+/** @brief Number of all states SystemStatus can be */
 #define SYSTEM_STATES 6
 
 #endif

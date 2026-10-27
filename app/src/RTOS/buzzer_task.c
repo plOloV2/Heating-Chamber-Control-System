@@ -162,7 +162,7 @@ static void check_error(void)
     for(size_t i = 0; i < SYSTEM_STATES; i++){
         if((SystemStatus & (1U << i)) != 0U)
         {
-            play_melody(melodies[i+3]);
+            play_melody(melodies[i]);
             vTaskDelay(pdMS_TO_TICKS(2500));
         }
 

@@ -31,11 +31,17 @@ typedef enum {
     /** @brief LSE clock startup failed */
     SYSTEM_INIT_STATUS_LSE_TIMEOUT = 1U << 3U,
 
+    /** @brief LSE clock not initialized */
+    SYSTEM_INIT_STATUS_LSE_NINIT = 1U << 4U,
+
     /** @brief GPIO initialization failed */
-    SYSTEM_INIT_STATUS_GPIO_FAIL = 1U << 4U
+    SYSTEM_INIT_STATUS_GPIO_FAIL = 1U << 5U
 } system_init_status_t;
 
 /** @brief Main system_init_status_t status declared in system_init.c */
 extern volatile system_init_status_t SystemInitStatus;
+
+/** @brief Number of all states SystemInitStatus can be */
+#define INIT_STATES 7
 
 #endif

@@ -8,6 +8,7 @@
 
 #include "RTOS/buzzer_task.h"
 #include "RTOS/temp_task.h"
+#include "RTOS/SD_task.h"
 #include "mem_location.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -23,6 +24,12 @@ CCMRAM_BSS TaskHandle_t xTempTaskHandle = NULL;
 CCMRAM_BSS static StaticTask_t xTempTaskTCB;
 CCMRAM_BSS static StackType_t  xTempTaskStack[TEMP_TASK_STACK_SIZE];
 
+/* Static memory allocation for Temp task */
+CCMRAM_BSS TaskHandle_t xSDTaskHandle = NULL;
+CCMRAM_BSS static StaticTask_t xSDTaskTCB;
+CCMRAM_BSS static StackType_t  xSDTaskStack[SD_TASK_STACK_SIZE];
+
+/** @brief Calls xTaskCreateStatic() to create RTOS tasks. */
 void create_tasks(void){
 
     xBuzzerTaskHandle = xTaskCreateStatic(
@@ -43,6 +50,16 @@ void create_tasks(void){
         tskIDLE_PRIORITY + 1U,
         xTempTaskStack,
         &xTempTaskTCB
+    );
+
+    xSDTaskHandle = xTaskCreateStatic(
+        vSDTask,
+        "SD Card",
+        SD_TASK_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY + 3U,
+        xSDTaskStack,
+        &xSDTaskTCB
     );
 
 }

@@ -1,8 +1,8 @@
-#ifndef DATA_STRUCTS_H
-#define DATA_STRUCTS_H
+#ifndef FURNACE_STRUCTS_H
+#define FURNACE_STRUCTS_H
 
 /**
- * @file data_structs.h
+ * @file furnace_structs.h
  * @brief Definition of main data struct cotroling baking.
  *
  * @details

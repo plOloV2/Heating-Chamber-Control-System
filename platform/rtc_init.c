@@ -24,8 +24,9 @@ bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t
  * @brief Configure LSE oscillator as the RTC clock source and enable the RTC
  *        clock if not already initialized in the backup domain
  * 
- * @return SYSTEM_INIT_STATUS_OK when RTC clock is already active or configured
- *         successfully, otherwise returns SYSTEM_INIT_STATUS_LSE_TIMEOUT
+ * @return SYSTEM_INIT_STATUS_OK when RTC clock is configured successfully,
+ *         SYSTEM_INIT_STATUS_LSE_NINIT when LSE initializes, but RTC misses date,
+ *         SYSTEM_INIT_STATUS_LSE_TIMEOUT when LSE fails to stabilize 
  */
 system_init_status_t configure_rtc_clock(void)
 {
@@ -102,6 +103,6 @@ system_init_status_t configure_rtc_clock(void)
         CLEAR_BIT(PWR->CR, PWR_CR_DBP);
     }
 
-    return SYSTEM_INIT_STATUS_OK;
+    return SYSTEM_INIT_STATUS_LSE_NINIT;
 
 }

@@ -17,13 +17,15 @@ set(sources_SRCS
     app/src/RTOS/temp_task.c
     app/src/RTOS/buzzer_task.c
     app/src/RTOS/create_tasks.c
+    app/src/RTOS/SD_task.c
     startup/startup_stm32f405.c
     platform/system_init.c
     platform/clock_init.c
     platform/clock_info.c
     platform/pin_init.c
     platform/rtc_init.c
-    platform/pin_operation.c
+    platform/pin_operations.c
+    platform/RTC_operations.c
     platform/buzzer_operations.c
     middlewares/FreeRTOS/vApplicationStackOverflowHook.c
     middlewares/FatFs/source/diskio.c

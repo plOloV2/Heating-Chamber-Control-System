@@ -1,5 +1,5 @@
-#ifndef SYSTEM_INIT_H
-#define SYSTEM_INIT_H
+#ifndef SYSTEM_CLOCKS_H
+#define SYSTEM_CLOCKS_H
 
 /**
  * @file system_clocks.h

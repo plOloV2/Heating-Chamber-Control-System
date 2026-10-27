@@ -1,5 +1,5 @@
 /**
- * @file pin_operation.c
+ * @file pin_operations.c
  * @brief Implememtation of functions to change GPIO pins state.
  *
  * @details
