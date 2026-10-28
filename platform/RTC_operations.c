@@ -1,5 +1,6 @@
 #include "stm32f4xx.h"
 #include "drivers/RTC_operations.h"
+#include "system_state/system_init_error.h"
 
 /** 
  * @brief Helper packing function
@@ -42,6 +43,7 @@ uint32_t read_time(void)
 
 }
 
+
 uint32_t read_date(void)
 {
     if (RTC_valid)
@@ -67,5 +69,84 @@ uint32_t read_date(void)
 
     /* Fallback date: 2005.04.02 */
     return pack_result(2005U, 4U, 2U);
+
+}
+
+
+/** 
+ * @brief Helper function to check if year is a leap year
+ * 
+ * @param year Year value to check, should be between [0-99]
+ * 
+ * @returns TRUE on leap year, FALSE otherwise
+ */
+static inline bool is_year_intercalary(uint8_t year)
+{
+    return (year % 4U) == 0U;
+}
+
+/**
+ * @brief Helper function to check if a date is valid.
+ * 
+ * @param year  Offset from year 2000 [0-99].
+ * @param month Current month [1-12].
+ * @param day   Current day [1-31].
+ * 
+ * @return true if date is valid, false otherwise.
+ */
+static bool valid_date(uint8_t year, uint8_t month, uint8_t day)
+{
+    static const uint8_t days_in_month[] = {
+        0U, 31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+    };
+
+    if(year >= 100U || month < 1U || month > 12U || day == 0U)
+    {
+        return false;
+    }
+
+    uint8_t max_days = days_in_month[month];
+    if(month == 2U && is_year_intercalary(year))
+    {
+        max_days = 29U;
+    }
+
+    return day <= max_days;
+}
+
+
+/** 
+ * @brief Helper function to check if time is valid
+ * 
+ * @param hour Current hour [0-23]
+ * @param minute Curent minute [0-60]
+ * @param seconds Current seconds count [0-60]
+ * 
+ * @returns TRUE if time is valid, FALSE otherwise
+ */
+static bool valid_time(uint8_t hour, uint8_t minute, uint8_t seconds)
+{
+    return (hour < 24U && minute < 60U && seconds < 60U);
+}
+
+
+bool set_date_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t seconds)
+{
+
+    year -= 2000;
+
+    /** RTC must be active, date and time must be valid */
+    if( READ_BIT(SystemInitStatus, SYSTEM_INIT_STATUS_LSE_TIMEOUT) == 1 ||
+        !valid_date(year, month, day) ||
+        !valid_time(hour, minute, seconds))
+    {
+        return false;
+    }
+
+
+    // const uint32_t date = 
+
+
+    return true;
 
 }

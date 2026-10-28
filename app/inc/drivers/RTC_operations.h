@@ -14,6 +14,9 @@
 
 #include <stdint.h>
 
+/* Magic number for the backup register */
+#define RTC_MAGIC_NUMBER ((uint32_t)0x0F0690F0)
+
 /** @brief Status of RTC, true if RTC was initialized properly and has valid date */
 extern bool RTC_valid;
 
@@ -41,5 +44,19 @@ uint32_t read_time(void);
  *          Returns 2005.04.02 (0x07D50402) on error/uninitialized.
  */
 uint32_t read_date(void);
+
+/**
+ * @brief Write date and time to RTC registers.
+ * 
+ * @param year Current year 
+ * @param month Current month
+ * @param day Current day
+ * @param hour Current hour
+ * @param minute Current minute
+ * @param seconds Current seconds count   
+ * 
+ * @returns TRUE on succesful time and date set, FALSE on fail  
+ */
+bool set_date_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t seconds);
 
 #endif
