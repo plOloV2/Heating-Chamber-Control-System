@@ -32,8 +32,7 @@ system_init_status_t configure_rtc_clock(void)
 
     /* Backup-domain writes require the PWR clock and DBP access. */
     SET_BIT(PWR->CR, PWR_CR_DBP);
-    while (READ_BIT(PWR->CR, PWR_CR_DBP) == 0U) {
-    }
+    while (READ_BIT(PWR->CR, PWR_CR_DBP) == 0U);
 
     /* 
      * If the magic number is present, the RTC was kept alive by the battery.

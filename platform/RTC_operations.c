@@ -119,8 +119,8 @@ static bool valid_date(uint8_t year, uint8_t month, uint8_t day)
  * @brief Helper function to check if time is valid
  * 
  * @param hour Current hour [0-23]
- * @param minute Curent minute [0-60]
- * @param seconds Current seconds count [0-60]
+ * @param minute Curent minute [0-59]
+ * @param seconds Current seconds count [0-59]
  * 
  * @returns TRUE if time is valid, FALSE otherwise
  */
@@ -130,22 +130,89 @@ static bool valid_time(uint8_t hour, uint8_t minute, uint8_t seconds)
 }
 
 
+bool wait_for_register_value(volatile const uint32_t *register_address, uint32_t mask, uint32_t expected_value);
+
+
 bool set_date_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t seconds)
 {
+    /** Ensure Year is in proper range */
+    if(year < 2000U || year > 2099U)
+    {
+        return false;
+    }
 
-    year -= 2000;
+    /** Subtract 2000 for proper BCD */
+    const uint8_t year_offset = year - 2000; 
 
     /** RTC must be active, date and time must be valid */
-    if( READ_BIT(SystemInitStatus, SYSTEM_INIT_STATUS_LSE_TIMEOUT) == 1 ||
-        !valid_date(year, month, day) ||
+    if( READ_BIT(SystemInitStatus, SYSTEM_INIT_STATUS_LSE_TIMEOUT) != 0U ||
+        !valid_date(year_offset, month, day) ||
         !valid_time(hour, minute, seconds))
     {
         return false;
     }
 
+    /** BCD date coding/ */
+    const uint32_t date = (((uint32_t)(year_offset / 10U) << RTC_DR_YT_Pos) |
+                           ((uint32_t)(year_offset % 10U) << RTC_DR_YU_Pos) |
+                           ((uint32_t)(month / 10U)       << RTC_DR_MT_Pos) |
+                           ((uint32_t)(month % 10U)       << RTC_DR_MU_Pos) |
+                           ((uint32_t)(day / 10U)         << RTC_DR_DT_Pos) |
+                           ((uint32_t)(day % 10U)         << RTC_DR_DU_Pos) |
+                           (1UL                           << RTC_DR_WDU_Pos));
 
-    // const uint32_t date = 
+    /** BCD time coding */
+    const uint32_t time = (((uint32_t)(hour / 10U)    << RTC_TR_HT_Pos)  |
+                           ((uint32_t)(hour % 10U)    << RTC_TR_HU_Pos)  |
+                           ((uint32_t)(minute / 10U)  << RTC_TR_MNT_Pos) |
+                           ((uint32_t)(minute % 10U)  << RTC_TR_MNU_Pos) |
+                           ((uint32_t)(seconds / 10U) << RTC_TR_ST_Pos)  |
+                           ((uint32_t)(seconds % 10U) << RTC_TR_SU_Pos));
 
+    
+    /** Enable DBP access */
+    const uint32_t previous_dbp = READ_BIT(PWR->CR, PWR_CR_DBP);
+    SET_BIT(PWR->CR, PWR_CR_DBP);
+    if(!wait_for_register_value(&PWR->CR, PWR_CR_DBP_Msk, PWR_CR_DBP))
+    {
+        return false;
+    }
+
+    /** Disable RTC register write protection */
+    WRITE_REG(RTC->WPR, 0xCAU);
+    WRITE_REG(RTC->WPR, 0x53U);
+
+    /** Enter Initialization mode */
+    WRITE_REG(RTC->ISR, RTC_ISR_INIT);
+
+    if(!wait_for_register_value(&RTC->ISR, RTC_ISR_INITF_Msk, RTC_ISR_INITF))
+    {
+        WRITE_REG(RTC->ISR, ~RTC_ISR_INIT);
+        WRITE_REG(RTC->WPR, 0xFFU);
+        if (previous_dbp == 0U)
+        {
+            CLEAR_BIT(PWR->CR, PWR_CR_DBP);
+        }
+
+        return false;
+
+    }
+
+    /** Update Calendar & Backup Register */
+    WRITE_REG(RTC->TR, time);
+    WRITE_REG(RTC->DR, date);
+    WRITE_REG(RTC->BKP0R, RTC_MAGIC_NUMBER);
+
+    /** Exit Initialization mode and wait for shadow registers to sync */
+    WRITE_REG(RTC->ISR, ~(RTC_ISR_INIT | RTC_ISR_RSF));
+    (void)wait_for_register_value(&RTC->ISR, RTC_ISR_RSF_Msk, RTC_ISR_RSF);
+
+    /** Re-enable write protection */
+    WRITE_REG(RTC->WPR, 0xFFU);
+    if(previous_dbp == 0U)
+    {
+        CLEAR_BIT(PWR->CR, PWR_CR_DBP);
+    }
 
     return true;
 

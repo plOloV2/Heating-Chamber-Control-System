@@ -48,12 +48,12 @@ uint32_t read_date(void);
 /**
  * @brief Write date and time to RTC registers.
  * 
- * @param year Current year 
- * @param month Current month
- * @param day Current day
- * @param hour Current hour
- * @param minute Current minute
- * @param seconds Current seconds count   
+ * @param year Current year [2000-2099]
+ * @param month Current month [1-12]
+ * @param day Current day [1-28/29/30/31]
+ * @param hour Current hour [0-23]
+ * @param minute Current minute [0-59]
+ * @param seconds Current seconds count [0-59]
  * 
  * @returns TRUE on succesful time and date set, FALSE on fail  
  */
