@@ -1,0 +1,37 @@
+Name                                  : Offset  : Padded Size
+
+default-fl.blob                       : 0       : 4096       
+Arrow_big_32x32_ASTC_4X4.raw          : 4096    : 1024       
+Arrow_medium_24x24_ASTC_4X4.raw       : 5120    : 576        
+Arrow_small_16x16_ASTC_4X4.raw        : 5696    : 256        
+Fan_off_64x64_ASTC_4X4.raw            : 5952    : 4096       
+Fan_rot_0_64x64_ASTC_4X4.raw          : 10048   : 4096       
+Fan_rot_1_64x64_ASTC_4X4.raw          : 14144   : 4096       
+Fan_rot_2_64x64_ASTC_4X4.raw          : 18240   : 4096       
+Farewell_480x272_ASTC_4X4.raw         : 22336   : 130560     
+Giga_Kubica_64x52_ASTC_4X4.raw        : 152896  : 3328       
+Heat_off_64x64_ASTC_4X4.raw           : 156224  : 4096       
+Heat_on_64x64_ASTC_4X4.raw            : 160320  : 4096       
+Klatwa_480x272_ASTC_4X4.raw           : 164416  : 130560     
+Logo_PWR_RT_BLACK_384x88_ASTC_4X4.raw : 294976  : 33792      
+Logo_PWR_RT_GOLD_384x88_ASTC_4X4.raw  : 328768  : 33792      
+Logo_PWR_RT_WHITE_384x88_ASTC_4X4.raw : 362560  : 33792      
+Oven_fire_480x272_ASTC_4X4.raw        : 396352  : 130560     
+RT14e_480x272_ASTC_4X4.raw            : 526912  : 130560     
+RT15e_1_480x272_ASTC_4X4.raw          : 657472  : 130560     
+RT15e_2_480x272_ASTC_4X4.raw          : 788032  : 130560     
+RT15e_3_480x272_ASTC_4X4.raw          : 918592  : 130560     
+RT15e_4_480x272_ASTC_4X4.raw          : 1049152 : 130560     
+RT15e_5_480x272_ASTC_4X4.raw          : 1179712 : 130560     
+RT15e_6_480x272_ASTC_4X4.raw          : 1310272 : 130560     
+RT15e_7_480x272_ASTC_4X4.raw          : 1440832 : 130560     
+RT15e_8_480x272_ASTC_4X4.raw          : 1571392 : 130560     
+RT15e_9_480x272_ASTC_4X4.raw          : 1701952 : 130560     
+RT15e_10_480x272_ASTC_4X4.raw         : 1832512 : 130560     
+RT15e_11_480x272_ASTC_4X4.raw         : 1963072 : 130560     
+RT15e_13_480x272_ASTC_4X4.raw         : 2093632 : 130560     
+RT15e_14_480x272_ASTC_4X4.raw         : 2224192 : 130560     
+RT16e_1_480x272_ASTC_4X4.raw          : 2354752 : 130560     
+RT16e_2_480x272_ASTC_4X4.raw          : 2485312 : 130560     
+RT16e_3_480x272_ASTC_4X4.raw          : 2615872 : 130560     
+magic_val.bin                         : 2746432 : 4          
