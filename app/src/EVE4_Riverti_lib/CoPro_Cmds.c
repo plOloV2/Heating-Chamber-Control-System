@@ -25,7 +25,7 @@
  * AND SUBSEQUENT WHQL RE-CERTIFICATION AS A RESULT OF MAKING THESE CHANGES.
  */
 
-#include "EVE4_Riverti_lib/platform.h"
+#include "EVE4_Riverti_lib/screen_platform.h"
 #include "EVE4_Riverti_lib/App_Common.h"
 
 static uint8_t COUNT_ARGS(const char* str)

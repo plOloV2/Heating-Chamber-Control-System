@@ -26,7 +26,7 @@
  */
 
 
-#include "EVE4_Riverti_lib/platform.h"
+#include "EVE4_Riverti_lib/screen_platform.h"
 #include "EVE4_Riverti_lib/Hal_Utils.h"
 #include "EVE4_Riverti_lib/App_Common.h"
 
