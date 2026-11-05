@@ -32,8 +32,8 @@
  0.1 - date 2017.03.24 - Initial version
  */
 
-#include "EVE4_Riverti_lib/screen_platform.h"
-#include "EVE4_Riverti_lib/App_Common.h"
+#include "EVE4_Riverdi_lib/screen_platform.h"
+#include "EVE4_Riverdi_lib/App_Common.h"
 
 /*************************************************************************************************
  *                      These functions work with FT8XX GPU buffer
@@ -61,14 +61,17 @@ void App_WrDl_Buffer(Gpu_Hal_Context_t *phost, uint32_t cmd) {
 
 
 void App_Flush_DL_Buffer(Gpu_Hal_Context_t *phost) {
+    (void)phost;
 	DlBuffer_Index = 0;
 }
 
 void App_Flush_Co_Buffer(Gpu_Hal_Context_t *phost) {
+    (void)phost;
 	CmdBuffer_Index = 0;
 }
 
 void App_Flush_Co_Buffer_nowait(Gpu_Hal_Context_t *phost) {
+    (void)phost;
 	CmdBuffer_Index = 0;
 }
 
@@ -83,7 +86,7 @@ void App_Set_CmdBuffer_Index(uint32_t index) {
  *                      Application Utilities
  **************************************************************************************************/
 
-static uint8_t sk = 0;
+static uint8_t sk __attribute__((unused)) = 0;
 uint8_t App_Read_Tag(Gpu_Hal_Context_t *phost) {
 	static uint8_t Read_tag = 0, temp_tag = 0, ret_tag = 0;
 	Read_tag = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);

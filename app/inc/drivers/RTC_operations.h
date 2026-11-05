@@ -18,7 +18,7 @@
 #define RTC_MAGIC_NUMBER ((uint32_t)0x0F0690F0)
 
 /** @brief Status of RTC, true if RTC was initialized properly and has valid date */
-extern bool RTC_valid;
+extern volatile bool RTC_valid;
 
 /* Unpacking macros for convenience */
 #define RTC_UNPACK_YEAR(date)   (((date) >> 16U) & 0xFFFFU)

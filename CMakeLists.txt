@@ -15,11 +15,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 set(sources_SRCS
     app/src/main.c
 
-    app/src/EVE4_Riverti_lib/screen_platform.c
-    app/src/EVE4_Riverti_lib/App_Common.c
-    app/src/EVE4_Riverti_lib/CoPro_Cmds.c
-    app/src/EVE4_Riverti_lib/Hal_Utils.c
-    app/src/EVE4_Riverti_lib/Gpu_Hal.c
+    app/src/EVE4_Riverdi_lib/screen_platform.c
+    app/src/EVE4_Riverdi_lib/App_Common.c
+    app/src/EVE4_Riverdi_lib/CoPro_Cmds.c
+    app/src/EVE4_Riverdi_lib/Hal_Utils.c
+    app/src/EVE4_Riverdi_lib/Gpu_Hal.c
     
     app/src/RTOS/temp_task.c
     app/src/RTOS/buzzer_task.c
@@ -34,6 +34,7 @@ set(sources_SRCS
     platform/clock_info.c
     platform/system_init.c
     platform/pin_operations.c
+    platform/SPI_operations.c
     platform/RTC_operations.c
     platform/buzzer_operations.c
 

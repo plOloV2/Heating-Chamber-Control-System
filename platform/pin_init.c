@@ -38,10 +38,10 @@
 #define GPIO_PUPD_PULLDOWN          2U
 
 /** @brief GPIO output speed */
-#define GPIO_SPEED_LOW              0U /** Up to 8MHz */
-#define GPIO_SPEED_MEDIUM           1U /** Up to 50MHz */
-#define GPIO_SPEED_FAST             2U /** Up to 100MHz */
-#define GPIO_SPEED_HIGH             3U /** Up to 180MHz */
+#define GPIO_SPEED_LOW              0U /** From 4MHz with Cl=50pF up to 8MHz with Cl=10pF*/
+#define GPIO_SPEED_MEDIUM           1U /** From 25MHz with Cl=50pF up to 50MHz with Cl=10pF*/
+#define GPIO_SPEED_FAST             2U /** From 50MHz with Cl=50pF up to 100MHz with Cl=10pF*/
+#define GPIO_SPEED_HIGH             3U /** From 100MHz with Cl=50pF up to 180MHz with Cl=10pF*/
 
 
 /** @brief Configure AHB clock and GPIO registers */
@@ -57,47 +57,50 @@ void configure_gpio(void)
                   GPIO_BSRR_INACTIVE(BLS_PIN,  BLS_ACTIVE)  |
                   (1UL << (BUZZ_PIN + 16U)); /** Force Buzzer LOW on boot */
 
+    GPIOB->BSRR = (GPIO_BSRR_INACTIVE(SPI_CS_PIN, SPI_CS_ACTIVE)); /** SPI CS inactive (HIGH) on boot */
+
     GPIOC->BSRR = GPIO_BSRR_INACTIVE(LED1_PIN,    LED1_ACTIVE)    |
                   GPIO_BSRR_INACTIVE(LED2_PIN,    LED2_ACTIVE)    |
                   GPIO_BSRR_INACTIVE(LCD_RST_PIN, LCD_RST_ACTIVE); /** Active low, set HIGH (inactive) */
 
 
     /** Configure Output Type as Push-Pull (0) for all outputs and AF pins. */
-    CLEAR_BIT(GPIOA->OTYPER, (1UL << FAN_PIN) | (1UL << HEAT_PIN) | (1UL << BUZZ_PIN) | (1UL << BLS_PIN));
-    CLEAR_BIT(GPIOB->OTYPER, (1UL << SPI_CS_PIN) | (1UL << SPI_SCLK_PIN) | (1UL << SPI_MISO_PIN) | (1UL << SPI_MOSI_PIN));
-    CLEAR_BIT(GPIOC->OTYPER, (1UL << LED1_PIN) | (1UL << LED2_PIN) | (1UL << LCD_RST_PIN) |
-                             (1UL << SDIO_D0_PIN) | (1UL << SDIO_D1_PIN) | (1UL << SDIO_D2_PIN) |
-                             (1UL << SDIO_D3_PIN) | (1UL << SDIO_CK_PIN));
+    CLEAR_BIT(GPIOA->OTYPER, (1UL << FAN_PIN)     | (1UL << HEAT_PIN)     | (1UL << BUZZ_PIN)     | (1UL << BLS_PIN));
+    CLEAR_BIT(GPIOB->OTYPER, (1UL << SPI_CS_PIN)  | (1UL << SPI_SCLK_PIN) | (1UL << SPI_MISO_PIN) | (1UL << SPI_MOSI_PIN));
+    CLEAR_BIT(GPIOC->OTYPER, (1UL << LED1_PIN)    | (1UL << LED2_PIN)     | (1UL << LCD_RST_PIN)  | (1UL << SDIO_D0_PIN) |
+                             (1UL << SDIO_D1_PIN) | (1UL << SDIO_D2_PIN)  | (1UL << SDIO_D3_PIN)  | (1UL << SDIO_CK_PIN));
     CLEAR_BIT(GPIOD->OTYPER, (1UL << SDIO_CMD_PIN));
 
 
     /** Configure I/O output speed */
-    /** Buzzer set to medium */
+    /** Buzzer set to low */
     MODIFY_REG(GPIOA->OSPEEDR,
                GPIO_FIELD_MASK(BUZZ_PIN),
-               GPIO_FIELD_VAL(BUZZ_PIN, GPIO_SPEED_MEDIUM));
+               GPIO_FIELD_VAL(BUZZ_PIN, GPIO_SPEED_LOW));
 
+    /** SPI set to fast (SPI2 max speed is 21MHz) */
     MODIFY_REG(GPIOB->OSPEEDR,
                GPIO_FIELD_MASK(SPI_CS_PIN) | GPIO_FIELD_MASK(SPI_SCLK_PIN) |
                GPIO_FIELD_MASK(SPI_MISO_PIN) | GPIO_FIELD_MASK(SPI_MOSI_PIN),
-               GPIO_FIELD_VAL(SPI_CS_PIN,   GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SPI_SCLK_PIN, GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SPI_MISO_PIN, GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SPI_MOSI_PIN, GPIO_SPEED_HIGH));
+               GPIO_FIELD_VAL(SPI_CS_PIN,   GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SPI_SCLK_PIN, GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SPI_MISO_PIN, GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SPI_MOSI_PIN, GPIO_SPEED_FAST));
 
+    /** SDIO set to fast (SDIO max speed set in code is 24MHz) */
     MODIFY_REG(GPIOC->OSPEEDR,
                GPIO_FIELD_MASK(SDIO_D0_PIN) | GPIO_FIELD_MASK(SDIO_D1_PIN) |
                GPIO_FIELD_MASK(SDIO_D2_PIN) | GPIO_FIELD_MASK(SDIO_D3_PIN) |
                GPIO_FIELD_MASK(SDIO_CK_PIN),
-               GPIO_FIELD_VAL(SDIO_D0_PIN, GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SDIO_D1_PIN, GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SDIO_D2_PIN, GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SDIO_D3_PIN, GPIO_SPEED_HIGH) |
-               GPIO_FIELD_VAL(SDIO_CK_PIN, GPIO_SPEED_HIGH));
+               GPIO_FIELD_VAL(SDIO_D0_PIN, GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SDIO_D1_PIN, GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SDIO_D2_PIN, GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SDIO_D3_PIN, GPIO_SPEED_FAST) |
+               GPIO_FIELD_VAL(SDIO_CK_PIN, GPIO_SPEED_FAST));
 
     MODIFY_REG(GPIOD->OSPEEDR,
                GPIO_FIELD_MASK(SDIO_CMD_PIN),
-               GPIO_FIELD_VAL(SDIO_CMD_PIN, GPIO_SPEED_HIGH));
+               GPIO_FIELD_VAL(SDIO_CMD_PIN, GPIO_SPEED_FAST));
 
 
     /** Configure pull-up / pull-down resistors */
@@ -146,11 +149,10 @@ void configure_gpio(void)
                GPIO_AFR_MASK(BUZZ_PIN),
                GPIO_AFR_VAL(BUZZ_PIN, BUZZ_AF));
 
-    /* GPIOB: SPI2 pins (PB12..PB15) -> AF5 */
+    /* GPIOB: SPI2 pins (PB13..PB15) -> AF5 (PB12 is software CS) */
     MODIFY_REG(GPIOB->AFR[1],
-               GPIO_AFR_MASK(SPI_CS_PIN) | GPIO_AFR_MASK(SPI_SCLK_PIN) |
+               GPIO_AFR_MASK(SPI_SCLK_PIN) |
                GPIO_AFR_MASK(SPI_MISO_PIN) | GPIO_AFR_MASK(SPI_MOSI_PIN),
-               GPIO_AFR_VAL(SPI_CS_PIN, SPI_CS_AF)     |
                GPIO_AFR_VAL(SPI_SCLK_PIN, SPI_SCLK_AF) |
                GPIO_AFR_VAL(SPI_MISO_PIN, SPI_MISO_AF) |
                GPIO_AFR_VAL(SPI_MOSI_PIN, SPI_MOSI_AF));
@@ -194,20 +196,21 @@ void configure_gpio(void)
 
     /** GPIOB:
      * - BUT1..BUT4 -> Digital Inputs (00)
-     * - SPI_CS, SPI_SCLK, SPI_MISO, SPI_MOSI -> Alternate Function (10)
+     * - SPI_CS -> General Purpose Output (01)
+     * - SPI_SCLK, SPI_MISO, SPI_MOSI -> Alternate Function (10)
      */
     MODIFY_REG(GPIOB->MODER,
                GPIO_FIELD_MASK(BUT1_PIN)     | GPIO_FIELD_MASK(BUT2_PIN)     |
                GPIO_FIELD_MASK(BUT3_PIN)     | GPIO_FIELD_MASK(BUT4_PIN)     |
                GPIO_FIELD_MASK(SPI_CS_PIN)   | GPIO_FIELD_MASK(SPI_SCLK_PIN) |
                GPIO_FIELD_MASK(SPI_MISO_PIN) | GPIO_FIELD_MASK(SPI_MOSI_PIN),
-               GPIO_FIELD_VAL(BUT1_PIN,     GPIO_MODE_INPUT) |
-               GPIO_FIELD_VAL(BUT2_PIN,     GPIO_MODE_INPUT) |
-               GPIO_FIELD_VAL(BUT3_PIN,     GPIO_MODE_INPUT) |
-               GPIO_FIELD_VAL(BUT4_PIN,     GPIO_MODE_INPUT) |
-               GPIO_FIELD_VAL(SPI_CS_PIN,   GPIO_MODE_AF)    |
-               GPIO_FIELD_VAL(SPI_SCLK_PIN, GPIO_MODE_AF)    |
-               GPIO_FIELD_VAL(SPI_MISO_PIN, GPIO_MODE_AF)    |
+               GPIO_FIELD_VAL(BUT1_PIN,     GPIO_MODE_INPUT)  |
+               GPIO_FIELD_VAL(BUT2_PIN,     GPIO_MODE_INPUT)  |
+               GPIO_FIELD_VAL(BUT3_PIN,     GPIO_MODE_INPUT)  |
+               GPIO_FIELD_VAL(BUT4_PIN,     GPIO_MODE_INPUT)  |
+               GPIO_FIELD_VAL(SPI_CS_PIN,   GPIO_MODE_OUTPUT) |
+               GPIO_FIELD_VAL(SPI_SCLK_PIN, GPIO_MODE_AF)     |
+               GPIO_FIELD_VAL(SPI_MISO_PIN, GPIO_MODE_AF)     |
                GPIO_FIELD_VAL(SPI_MOSI_PIN, GPIO_MODE_AF));
 
     /** GPIOC:

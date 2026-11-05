@@ -64,31 +64,28 @@ static uint16_t s_rca = 0U;
 static bool s_is_sdhc = false;
 static LBA_t s_card_sector_count = 0U;
 
-/**
- * @brief Delay helper using FreeRTOS vTaskDelay (ensuring at least 1 tick if dur > 0).
- */
+/** @brief Delay helper using FreeRTOS vTaskDelay (ensuring at least 1 tick if dur > 0). */
 static inline void sdio_delay_ms(uint32_t dur)
 {
     const TickType_t ticks = pdMS_TO_TICKS(dur);
     vTaskDelay((ticks > 0U) ? ticks : 1U);
 }
 
-/**
- * @brief Check if a buffer can be directly accessed by DMA (4-byte aligned and located in SRAM).
- * Note: On STM32F4, DMA controllers cannot access CCMRAM (0x10000000 - 0x1000FFFF).
- */
+/** @brief Check if a buffer can be directly accessed by DMA (4-byte aligned and located in SRAM). */
 static inline bool is_dma_safe(const void *buf)
 {
     const uintptr_t addr = (uintptr_t)buf;
-    if ((addr & 3U) != 0U)
+    if((addr & 3U) != 0U)
     {
         return false;
     }
-    if (addr < 0x20000000UL || addr >= 0x20020000UL)
+    if(addr < 0x20000000UL || addr >= 0x20020000UL)
     {
         return false;
     }
+
     return true;
+    
 }
 
 /**
@@ -97,6 +94,7 @@ static inline bool is_dma_safe(const void *buf)
  * @param cmd_index Command index (0-63).
  * @param arg Command argument.
  * @param wait_resp SDIO_RESP_NONE, SDIO_RESP_SHORT, or SDIO_RESP_LONG.
+ * 
  * @return true if command completed successfully, false on error or timeout.
  */
 static bool sdio_send_command(uint32_t cmd_index, uint32_t arg, uint32_t wait_resp)
@@ -177,9 +175,7 @@ static bool sdio_wait_ready(void)
 
 }
 
-/**
- * @brief Initialize SD card hardware and negotiate 4-bit high-speed mode.
- */
+/** @brief Initialize SD card hardware and negotiate 4-bit high-speed mode. */
 static bool sdio_card_init(void)
 {
     /* Enable SDIO clock on APB2 */
@@ -343,9 +339,7 @@ static bool sdio_card_init(void)
 
 }
 
-/**
- * @brief Read one 512-byte block from SD card using DMA.
- */
+/** @brief Read one 512-byte block from SD card using DMA. */
 static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
 {
     const uint32_t addr = s_is_sdhc ? sector : (sector * 512U);
@@ -432,9 +426,7 @@ static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
     return RES_OK;
 }
 
-/**
- * @brief Write one 512-byte block to SD card using DMA.
- */
+/** @brief Write one 512-byte block to SD card using DMA. */
 static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
 {
     const uint32_t addr = s_is_sdhc ? sector : (sector * 512U);

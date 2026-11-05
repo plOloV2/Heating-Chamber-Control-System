@@ -25,7 +25,7 @@
  * AND SUBSEQUENT WHQL RE-CERTIFICATION AS A RESULT OF MAKING THESE CHANGES.
  */
 
-#include "EVE4_Riverti_lib/screen_platform.h"
+#include "EVE4_Riverdi_lib/screen_platform.h"
 
 /*****************************************************************************/
 
@@ -142,6 +142,7 @@ Gpu_Hal_StartCmdTransfer (Gpu_Hal_Context_t  *host,
                           GPU_TRANSFERDIR_T   rw,
                           uint16_t            count)
 {
+  (void)count;
   Gpu_Hal_StartTransfer(host,rw,host->cmd_fifo_wp + RAM_CMD);
 }
 
@@ -527,8 +528,6 @@ Gpu_CoreReset (Gpu_Hal_Context_t *host)
 
 /*****************************************************************************/
 
-#if (defined(FT81X_ENABLE))  || (defined(BT81X_ENABLE))
-
 /*
  * Gpu_81X_SelectSysCLK()
  *
@@ -640,8 +639,6 @@ Gpu_Hal_SetSPI (Gpu_Hal_Context_t      *host,
 
   return 0;
 }
-
-#endif /* (FT81X_ENABLE) || (BT81X_ENABLE) */
 
 /*****************************************************************************/
 
@@ -934,7 +931,7 @@ Fifo_Write (Gpu_Hal_Context_t  *host,
     return 0; /* error condition */
 
   /* check for the loopback conditions */
-  if(pFifo->fifo_wp + TotalBytes >= pFifo->fifo_len)
+  if(pFifo->fifo_wp + (uint32_t)TotalBytes >= (uint32_t)pFifo->fifo_len)
     {
       uint32_t partialchunk, secpartialchunk;
       partialchunk = pFifo->fifo_len - pFifo->fifo_wp;

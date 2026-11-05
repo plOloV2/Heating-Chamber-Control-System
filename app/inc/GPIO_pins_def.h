@@ -88,9 +88,9 @@
  * @{
  */
 #define BLS_PORT        GPIOA
-#define BLS_PIN         9U
+#define BLS_PIN         15U
 #define BLS_ACTIVE      1U
-#define BLS_EXTI        9U
+#define BLS_EXTI        15U
 /** @} */
 
 
@@ -101,7 +101,7 @@
  */
 #define BUT1_PORT       GPIOB
 #define BUT1_PIN        0U
-#define BUT1_ACTIVE     1U
+#define BUT1_ACTIVE     0U
 #define BUT1_EXTI       0U
 /** @} */
 
@@ -113,7 +113,7 @@
  */
 #define BUT2_PORT       GPIOB
 #define BUT2_PIN        1U
-#define BUT2_ACTIVE     1U
+#define BUT2_ACTIVE     0U
 #define BUT2_EXTI       1U
 /** @} */
 
@@ -125,7 +125,7 @@
  */
 #define BUT3_PORT       GPIOB
 #define BUT3_PIN        2U
-#define BUT3_ACTIVE     1U
+#define BUT3_ACTIVE     0U
 #define BUT3_EXTI       2U
 /** @} */
 
@@ -137,8 +137,20 @@
  */
 #define BUT4_PORT       GPIOB
 #define BUT4_PIN        10U
-#define BUT4_ACTIVE     1U
+#define BUT4_ACTIVE     0U
 #define BUT4_EXTI       10U
+/** @} */
+
+
+/**
+ * @name LCD_SPI_CS Net
+ * @brief SPI2 CS line for LCD screen.
+ * @{
+ */
+#define SPI_CS_PORT      GPIOB
+#define SPI_CS_PIN       12U
+#define SPI_CS_ACTIVE    0U
+#define SPI_CS_EXTI      12U
 /** @} */
 
 

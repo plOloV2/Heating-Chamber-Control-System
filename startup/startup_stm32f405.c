@@ -7,7 +7,7 @@
  */
 
 #include <stdint.h>
-#include "stm32f405xx.h"
+#include "stm32f4xx.h"
 
 #define WEAK __attribute__((weak, alias("Default_Handler"), noreturn))
 
@@ -256,6 +256,14 @@ void Default_Handler(void)
 
 void Reset_Handler(void)
 {
+    
+    /** Enable FPU */
+    #if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
+        SET_BIT(SCB->CPACR, (3UL << (10U * 2U)) | (3UL << (11U * 2U)));
+        __DSB();
+        __ISB();
+    #endif
+
     const uint32_t *source;
     uint32_t *destination;
 

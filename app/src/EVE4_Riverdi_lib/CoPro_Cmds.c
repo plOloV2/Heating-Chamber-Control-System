@@ -25,8 +25,8 @@
  * AND SUBSEQUENT WHQL RE-CERTIFICATION AS A RESULT OF MAKING THESE CHANGES.
  */
 
-#include "EVE4_Riverti_lib/screen_platform.h"
-#include "EVE4_Riverti_lib/App_Common.h"
+#include "EVE4_Riverdi_lib/screen_platform.h"
+#include "EVE4_Riverdi_lib/App_Common.h"
 
 static uint8_t COUNT_ARGS(const char* str)
 {
@@ -128,6 +128,7 @@ void Gpu_CoCmd_Gauge(Gpu_Hal_Context_t *phost,int16_t x, int16_t y, int16_t r, u
 
 void Gpu_CoCmd_RegRead(Gpu_Hal_Context_t *phost,uint32_t ptr, uint32_t result)
 {
+  (void)result;
   Gpu_CoCmd_StartFunc(phost,CMD_SIZE*3);
   Gpu_Copro_SendCmd(phost, CMD_REGREAD);
   Gpu_Copro_SendCmd(phost, ptr);

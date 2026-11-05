@@ -38,14 +38,14 @@ typedef float		    float_t;
 /*****************************************************************************/
 
 typedef enum {
-  GPIO_CS   = GPIO_PIN_12, /* GPIOB */
-  GPIO_PD   = GPIO_PIN_6,  /* GPIOH */
-  GPIO_INT  = GPIO_PIN_7   /* GPIOH */
+  GPIO_CS   = 0,
+  GPIO_PD   = 1,
+  GPIO_INT  = 2
 } gpio_name;
 
 typedef enum {
-  GPIO_HIGH = GPIO_PIN_SET,
-  GPIO_LOW  = GPIO_PIN_RESET
+  GPIO_LOW  = 0,
+  GPIO_HIGH = 1
 } gpio_val;
 
 /*****************************************************************************/

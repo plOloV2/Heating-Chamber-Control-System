@@ -1,6 +1,7 @@
 #include "stm32f4xx.h"
 #include "drivers/RTC_operations.h"
 #include "system_state/system_init_error.h"
+#include "system_state/error.h"
 
 /** 
  * @brief Helper packing function
@@ -213,6 +214,10 @@ bool set_date_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint
     {
         CLEAR_BIT(PWR->CR, PWR_CR_DBP);
     }
+
+    /* Date and time are now valid; clear RTC error status */
+    RTC_valid = true;
+    CLEAR_BIT(SystemStatus, RTC_DATE_ERROR);
 
     return true;
 

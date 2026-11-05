@@ -16,7 +16,7 @@
 #include "task.h"
 
 /** @brief Signal played after succesful system initialization (SystemStatus == NO_ERROR). */
-CCMRAM_DATA const buzzer_note_t ready_to_bake[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t ready_to_bake[BUZZER_MELODY_NOTES_COUNT] = {
     { 1046U, 400U },
     {  880U, 400U },
     { 1046U, 400U },
@@ -28,7 +28,7 @@ CCMRAM_DATA const buzzer_note_t ready_to_bake[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after core system initialization fail (SystemStatus == SYSTEM_INIT_ERROR). */
-CCMRAM_DATA const buzzer_note_t core_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t core_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 1000U},
     {    0U,   0U },
     {    0U,   0U },
@@ -40,7 +40,7 @@ CCMRAM_DATA const buzzer_note_t core_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after RTC system fail (SystemStatus == RTC_DATE_ERROR). */
-CCMRAM_DATA const buzzer_note_t RTC_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t RTC_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
     {  880U, 500U },
@@ -52,7 +52,7 @@ CCMRAM_DATA const buzzer_note_t RTC_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after LCD fail (SystemStatus == LCD_INIT_ERROR). */
-CCMRAM_DATA const buzzer_note_t LCD_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t LCD_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
     {  880U, 500U },
@@ -64,7 +64,7 @@ CCMRAM_DATA const buzzer_note_t LCD_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after SD fail (SystemStatus == SD_CARD_INIT_ERROR). */
-CCMRAM_DATA const buzzer_note_t SD_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t SD_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
     {  880U, 500U },
@@ -76,7 +76,7 @@ CCMRAM_DATA const buzzer_note_t SD_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after RTOS fail (SystemStatus == RTOS_ERROR). */
-CCMRAM_DATA const buzzer_note_t RTOS_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t RTOS_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
     {  880U, 250U },
@@ -88,7 +88,7 @@ CCMRAM_DATA const buzzer_note_t RTOS_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after stage has finished (SystemStatus == ). */
-CCMRAM_DATA const buzzer_note_t stage_done[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t stage_done[BUZZER_MELODY_NOTES_COUNT] = {
     {  659U, 500U },
     {    0U, 500U },
     {  659U, 500U },
@@ -100,7 +100,7 @@ CCMRAM_DATA const buzzer_note_t stage_done[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after baking has finished (SystemStatus == ). */
-CCMRAM_DATA const buzzer_note_t baking_done[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t baking_done[BUZZER_MELODY_NOTES_COUNT] = {
     {  523U, 120U },
     {    0U,  20U },
     {  587U, 120U },
@@ -112,7 +112,7 @@ CCMRAM_DATA const buzzer_note_t baking_done[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Look up table for melodies. */
-CCMRAM_DATA const buzzer_note_t * const melodies[] = {
+const buzzer_note_t * const melodies[] = {
     core_fail,
     RTC_fail,
     LCD_fail,
@@ -171,9 +171,7 @@ static void check_error(void)
 }
 
 
-/**
- * @brief RTOS task body for buzzer control.
- */
+/** @brief RTOS task body for buzzer control. */
 void vBuzzerTask(void *pvParameters)
 {
     (void)pvParameters;
@@ -181,6 +179,11 @@ void vBuzzerTask(void *pvParameters)
     buzzer_hw_init();
     buzzer_play_tone(0U);
 
+    vTaskSuspend(NULL);
+    
+    /** TO DO:
+     * wait for all task to initialize, then unlock and check error.
+    */
     check_error();
 
     for (;;)

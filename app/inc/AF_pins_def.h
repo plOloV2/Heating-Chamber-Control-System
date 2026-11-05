@@ -112,18 +112,6 @@
 
 
 /**
- * @name LCD_SPI_CS Net
- * @brief SPI2 CS line for LCD screen.
- * @{
- */
-#define SPI_CS_PORT      GPIOB
-#define SPI_CS_PIN       12U
-#define SPI_CS_AF        5U
-#define SPI_CS_EXTI      12U
-/** @} */
-
-
-/**
  * @name LCD_SCLK Net
  * @brief SPI2 Clock line for LCD screen.
  * @{

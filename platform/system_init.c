@@ -39,13 +39,6 @@ void reset_clock_tree(void);
 /** @brief Main configuration function, calls function from other _init.c files and configures MCU. */
 void SystemInit(void)
 {
-
-    #if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
-        SET_BIT(SCB->CPACR, (3UL << (10U * 2U)) | (3UL << (11U * 2U)));
-        __DSB();
-        __ISB();
-    #endif
-
     SCB->VTOR = FLASH_BASE;
 
     reset_clock_tree();

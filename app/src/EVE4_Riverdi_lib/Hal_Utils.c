@@ -26,9 +26,9 @@
  */
 
 
-#include "EVE4_Riverti_lib/screen_platform.h"
-#include "EVE4_Riverti_lib/Hal_Utils.h"
-#include "EVE4_Riverti_lib/App_Common.h"
+#include "EVE4_Riverdi_lib/screen_platform.h"
+#include "EVE4_Riverdi_lib/Hal_Utils.h"
+#include "EVE4_Riverdi_lib/App_Common.h"
 
 
 /* fadeout effect by changing the display PWM from 100 till 0 */
