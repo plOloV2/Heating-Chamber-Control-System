@@ -43,19 +43,6 @@ static DMA_BUFFER uint8_t dma_dummy_rx = 0x00U;
 static volatile TaskHandle_t spi_waiting_task = NULL;
 
 
-/**
- * @brief Check if a buffer resides in AHB-accessible SRAM1/SRAM2 (0x20000000 - 0x2001FFFF).
- * 
- * @returns TRUE when buf is located in SRAM, FALSE otherwise
- */
-static inline bool is_dma_safe(const void *buf)
-{
-    const uintptr_t addr = (uintptr_t)buf;
-    return (addr >= 0x20000000UL) && (addr < 0x20020000UL);
-
-}
-
-
 /** @brief Clear any pending Overrun (OVR) or stale RXNE flag on SPI2. */
 static inline void spi_clear_ovr(void)
 {
@@ -380,7 +367,7 @@ uint16_t spi_transmit(const uint8_t *data, uint16_t size)
     }
 
     /* Direct DMA if buffer is in SRAM1/SRAM2 */
-    if(is_dma_safe(data))
+    if(is_DMA_safe(data, 1U))
     {
         return spi_dma_transfer_chunk(data, NULL, size) ? size : 0U;
     }
@@ -425,7 +412,7 @@ uint16_t spi_receive(uint8_t *data, uint16_t size)
         return spi_poll_transfer(NULL, data, size);
     }
 
-    if(is_dma_safe(data))
+    if(is_DMA_safe(data, 1U))
     {
         return spi_dma_transfer_chunk(NULL, data, size) ? size : 0U;
     }

@@ -159,7 +159,7 @@ void App_Calibrate_Screen(Gpu_Hal_Context_t *phost) {
 
 /******************************************************************************/
 
-void App_Common_Init(Gpu_Hal_Context_t *phost) {
+bool App_Common_Init(Gpu_Hal_Context_t *phost) {
 	Gpu_HalInit_t halinit;
 	uint8_t chipid;
 
@@ -182,11 +182,18 @@ void App_Common_Init(Gpu_Hal_Context_t *phost) {
 	Gpu_HostCommand(phost, GPU_ACTIVE_M);
 	Gpu_Hal_Sleep(300);
 
-	/* read Register ID to check if chip ID series is correct */
+	/* read Register ID to check if chip ID series is correct, screen gets 1s to respons (10 * 100ms) */
 	chipid = Gpu_Hal_Rd8(phost, REG_ID);
-	while (chipid != 0x7C) {
+	uint32_t tryies = 10;
+	while (chipid != 0x7C && --tryies > 0) {
 		chipid = Gpu_Hal_Rd8(phost, REG_ID);
 		Gpu_Hal_Sleep(100);
+	}
+
+	/** screen never gave correct respons -> somethnigs not good */
+	if(tryies == 0)
+	{
+		return false;
 	}
 
 	/* read REG_CPURESET to confirm 0 is returned */
@@ -242,6 +249,8 @@ void App_Common_Init(Gpu_Hal_Context_t *phost) {
 	Gpu_Hal_Wr8(phost, REG_PCLK, DispPCLK);
 
 	phost->cmd_fifo_wp = Gpu_Hal_Rd16(phost, REG_CMD_WRITE);
+
+	return true;
 }
 
 void App_Common_Close(Gpu_Hal_Context_t *phost) {

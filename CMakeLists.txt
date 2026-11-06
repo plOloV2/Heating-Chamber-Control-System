@@ -21,10 +21,11 @@ set(sources_SRCS
     app/src/EVE4_Riverdi_lib/Hal_Utils.c
     app/src/EVE4_Riverdi_lib/Gpu_Hal.c
     
+    app/src/RTOS/SD_task.c
+    app/src/RTOS/UI_task.c
     app/src/RTOS/temp_task.c
     app/src/RTOS/buzzer_task.c
     app/src/RTOS/create_tasks.c
-    app/src/RTOS/SD_task.c
 
     startup/startup_stm32f405.c
 

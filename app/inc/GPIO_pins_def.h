@@ -101,7 +101,7 @@
  */
 #define BUT1_PORT       GPIOB
 #define BUT1_PIN        0U
-#define BUT1_ACTIVE     0U
+#define BUT1_ACTIVE     1U
 #define BUT1_EXTI       0U
 /** @} */
 
@@ -113,7 +113,7 @@
  */
 #define BUT2_PORT       GPIOB
 #define BUT2_PIN        1U
-#define BUT2_ACTIVE     0U
+#define BUT2_ACTIVE     1U
 #define BUT2_EXTI       1U
 /** @} */
 
@@ -125,7 +125,7 @@
  */
 #define BUT3_PORT       GPIOB
 #define BUT3_PIN        2U
-#define BUT3_ACTIVE     0U
+#define BUT3_ACTIVE     1U
 #define BUT3_EXTI       2U
 /** @} */
 
@@ -137,7 +137,7 @@
  */
 #define BUT4_PORT       GPIOB
 #define BUT4_PIN        10U
-#define BUT4_ACTIVE     0U
+#define BUT4_ACTIVE     1U
 #define BUT4_EXTI       10U
 /** @} */
 

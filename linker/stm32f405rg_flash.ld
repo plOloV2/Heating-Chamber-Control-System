@@ -198,12 +198,12 @@ SECTIONS
 
 
   /* DMA buffers */
-  .dma_buffers (NOLOAD) : ALIGN(32)
+  .dma_buffers (NOLOAD) : ALIGN(4)
   {
-    . = ALIGN(32);
+    . = ALIGN(4);
     KEEP(*(.dma_buffers))
     KEEP(*(.dma_buffers*))
-    . = ALIGN(32);
+    . = ALIGN(4);
   } >RAM
 
 
@@ -240,7 +240,7 @@ SECTIONS
 ASSERT((ADDR(.isr_vector) % 512) == 0, "Vector table is not properly aligned");
 
 /* DMA section alignement check */
-ASSERT((ADDR(.dma_buffers) % 32) == 0, "DMA section is not properly aligned");
+ASSERT((ADDR(.dma_buffers) % 4) == 0, "DMA section is not properly aligned");
 
 /* Heap and stack collision check */
 ASSERT((_end + _Min_Heap_Size + _Min_Stack_Size) <= __stack, "Heap and stack colision");

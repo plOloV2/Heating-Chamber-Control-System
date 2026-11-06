@@ -50,7 +50,7 @@ void App_Calibrate_Screen(Gpu_Hal_Context_t *phost);
 
 /******************************************************************************/
 
-void App_Common_Init(Gpu_Hal_Context_t *phost);
+bool App_Common_Init(Gpu_Hal_Context_t *phost);
 void App_Common_Close(Gpu_Hal_Context_t *phost);
 
 #endif /* _APP_COMMON_H_ */

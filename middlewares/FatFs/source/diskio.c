@@ -64,28 +64,11 @@ static uint16_t s_rca = 0U;
 static bool s_is_sdhc = false;
 static LBA_t s_card_sector_count = 0U;
 
-/** @brief Delay helper using FreeRTOS vTaskDelay (ensuring at least 1 tick if dur > 0). */
+/** @brief Delay helper using FreeRTOS vTaskDelay. */
 static inline void sdio_delay_ms(uint32_t dur)
 {
     const TickType_t ticks = pdMS_TO_TICKS(dur);
     vTaskDelay((ticks > 0U) ? ticks : 1U);
-}
-
-/** @brief Check if a buffer can be directly accessed by DMA (4-byte aligned and located in SRAM). */
-static inline bool is_dma_safe(const void *buf)
-{
-    const uintptr_t addr = (uintptr_t)buf;
-    if((addr & 3U) != 0U)
-    {
-        return false;
-    }
-    if(addr < 0x20000000UL || addr >= 0x20020000UL)
-    {
-        return false;
-    }
-
-    return true;
-    
 }
 
 /**
@@ -324,10 +307,9 @@ static bool sdio_card_init(void)
         {
             /* Configure SDIO controller for 4-bit bus, high speed (24 MHz), hardware flow control */
             MODIFY_REG(SDIO->CLKCR,
-                       SDIO_CLKCR_CLKDIV_Msk | SDIO_CLKCR_WIDBUS_Msk,
-                       (0UL << POSITION_VAL(SDIO_CLKCR_CLKDIV_Msk)) |
+                       SDIO_CLKCR_CLKDIV_Msk | SDIO_CLKCR_WIDBUS_Msk | SDIO_CLKCR_HWFC_EN,
+                       (0UL << SDIO_CLKCR_CLKDIV_Pos) |
                        SDIO_CLKCR_WIDBUS_0 | /* 01: 4-bit wide bus */
-                       SDIO_CLKCR_HWFC_EN  | /* Hardware flow control enabled */
                        SDIO_CLKCR_CLKEN);
         }
 
@@ -361,13 +343,13 @@ static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
     WRITE_REG(DMA2_Stream3->NDTR, 512U / 4U); /* 128 32-bit words */
 
     WRITE_REG(DMA2_Stream3->FCR, DMA_SxFCR_DMDIS | DMA_SxFCR_FTH_1 | DMA_SxFCR_FTH_0); /* FIFO full */
-    WRITE_REG(DMA2_Stream3->CR, (4UL << POSITION_VAL(DMA_SxCR_CHSEL_Msk)) | /* Channel 4 */
-                                (3UL << POSITION_VAL(DMA_SxCR_PL_Msk))    | /* Very High priority */
-                                (2UL << POSITION_VAL(DMA_SxCR_MSIZE_Msk)) | /* 32-bit memory word */
-                                (2UL << POSITION_VAL(DMA_SxCR_PSIZE_Msk)) | /* 32-bit peripheral word */
-                                DMA_SxCR_MINC                             | /* Memory increment */
-                                DMA_SxCR_MBURST_0                         | /* INCR4 burst */
-                                DMA_SxCR_PBURST_0);                         /* INCR4 burst */
+    WRITE_REG(DMA2_Stream3->CR, (4UL << DMA_SxCR_CHSEL_Pos) | /* Channel 4 */
+                                (3UL << DMA_SxCR_PL_Pos)    | /* Very High priority */
+                                (2UL << DMA_SxCR_MSIZE_Pos) | /* 32-bit memory word */
+                                (2UL << DMA_SxCR_PSIZE_Pos) | /* 32-bit peripheral word */
+                                DMA_SxCR_MINC               | /* Memory increment */
+                                DMA_SxCR_PFCTRL             | /* Peripheral flow controller (SDIO) */
+                                DMA_SxCR_PBURST_0);           /* INCR4 burst */
 
     /* Enable DMA stream */
     SET_BIT(DMA2_Stream3->CR, DMA_SxCR_EN);
@@ -378,7 +360,7 @@ static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
     WRITE_REG(SDIO->DCTRL, SDIO_DCTRL_DTEN  |
                            SDIO_DCTRL_DTDIR | /* Direction: card to controller */
                            SDIO_DCTRL_DMAEN |
-                           (POSITION_VAL(512U) << POSITION_VAL(SDIO_DCTRL_DBLOCKSIZE_Msk))); /* 2^9 = 512 bytes */
+                           (POSITION_VAL(512U) << SDIO_DCTRL_DBLOCKSIZE_Pos)); /* 2^9 = 512 bytes */
 
     /* Send CMD17 (READ_SINGLE_BLOCK) */
     if (!sdio_send_command(CMD17_READ_SINGLE_BLOCK, addr, SDIO_RESP_SHORT))
@@ -390,8 +372,9 @@ static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
 
     /* Stage 1: Fast spin (~100 us) so normal 43 us transfers complete with zero RTOS overhead */
     const uint32_t err_mask = SDIO_STA_DCRCFAIL | SDIO_STA_DTIMEOUT | SDIO_STA_RXOVERR | SDIO_STA_STBITERR;
+    const uint32_t dma_err_mask = DMA_LISR_TEIF3 | DMA_LISR_DMEIF3 | DMA_LISR_FEIF3;
     uint32_t spin = DMA_FAST_SPIN_COUNT;
-    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3) == 0U) &&
+    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3 | dma_err_mask) == 0U) &&
            (READ_BIT(SDIO->STA, err_mask) == 0U) &&
            (spin > 0U))
     {
@@ -400,7 +383,7 @@ static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
 
     /* Stage 2: If card is stalling the read, yield CPU in 1 ms increments */
     uint32_t timeout_ms = DMA_WAIT_TIMEOUT_MS;
-    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3) == 0U) &&
+    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3 | dma_err_mask) == 0U) &&
            (READ_BIT(SDIO->STA, err_mask) == 0U) &&
            (timeout_ms > 0U))
     {
@@ -409,21 +392,23 @@ static DRESULT sdio_read_block(uint8_t *dest, uint32_t sector)
     }
 
     const uint32_t sta = READ_REG(SDIO->STA);
+    const uint32_t lisr = READ_REG(DMA2->LISR);
     CLEAR_BIT(DMA2_Stream3->CR, DMA_SxCR_EN);
-    CLEAR_REG(SDIO->DCTRL);
 
-    if ((timeout_ms == 0U) || (READ_BIT(sta, err_mask) != 0U))
+    if((timeout_ms == 0U) || (READ_BIT(sta, err_mask) != 0U) || (READ_BIT(lisr, dma_err_mask) != 0U))
     {
+        CLEAR_REG(SDIO->DCTRL);
         WRITE_REG(SDIO->ICR, SDIO_ICR_ALL_FLAGS);
         return RES_ERROR;
     }
 
     /* Wait for DATAEND (tight loop, takes only a few SDIO_CK cycles after DMA TC) */
     uint32_t timeout = 100000U;
-    while ((READ_BIT(SDIO->STA, SDIO_STA_DATAEND) == 0U) && (--timeout > 0U)) {}
+    while ((READ_BIT(SDIO->STA, SDIO_STA_DATAEND) == 0U) && (--timeout > 0U));
+    CLEAR_REG(SDIO->DCTRL);
     WRITE_REG(SDIO->ICR, SDIO_ICR_ALL_FLAGS);
 
-    return RES_OK;
+    return (timeout > 0U) ? RES_OK : RES_ERROR;
 }
 
 /** @brief Write one 512-byte block to SD card using DMA. */
@@ -448,14 +433,14 @@ static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
     WRITE_REG(DMA2_Stream3->NDTR, 512U / 4U); /* 128 words */
 
     WRITE_REG(DMA2_Stream3->FCR, DMA_SxFCR_DMDIS | DMA_SxFCR_FTH_1 | DMA_SxFCR_FTH_0); /* FIFO full */
-    WRITE_REG(DMA2_Stream3->CR, (4UL << POSITION_VAL(DMA_SxCR_CHSEL_Msk)) | /* Channel 4 */
-                                (3UL << POSITION_VAL(DMA_SxCR_PL_Msk))    | /* Very High priority */
-                                (2UL << POSITION_VAL(DMA_SxCR_MSIZE_Msk)) | /* 32-bit memory word */
-                                (2UL << POSITION_VAL(DMA_SxCR_PSIZE_Msk)) | /* 32-bit peripheral word */
-                                DMA_SxCR_MINC                             | /* Memory increment */
-                                DMA_SxCR_DIR_0                            | /* Direction: memory to peripheral */
-                                DMA_SxCR_MBURST_0                         | /* INCR4 burst */
-                                DMA_SxCR_PBURST_0);                         /* INCR4 burst */
+    WRITE_REG(DMA2_Stream3->CR, (4UL << DMA_SxCR_CHSEL_Pos) | /* Channel 4 */
+                                (3UL << DMA_SxCR_PL_Pos)    | /* Very High priority */
+                                (2UL << DMA_SxCR_MSIZE_Pos) | /* 32-bit memory word */
+                                (2UL << DMA_SxCR_PSIZE_Pos) | /* 32-bit peripheral word */
+                                DMA_SxCR_MINC               | /* Memory increment */
+                                DMA_SxCR_DIR_0              | /* Direction: memory to peripheral */
+                                DMA_SxCR_PFCTRL             | /* Peripheral flow controller (SDIO) */
+                                DMA_SxCR_PBURST_0);           /* INCR4 burst */
 
     /* Enable DMA stream */
     SET_BIT(DMA2_Stream3->CR, DMA_SxCR_EN);
@@ -472,12 +457,13 @@ static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
     WRITE_REG(SDIO->DLEN, 512U);
     WRITE_REG(SDIO->DCTRL, SDIO_DCTRL_DTEN  |
                            SDIO_DCTRL_DMAEN |
-                           (POSITION_VAL(512U) << POSITION_VAL(SDIO_DCTRL_DBLOCKSIZE_Msk))); /* Direction: controller to card (0) */
+                           (POSITION_VAL(512U) << SDIO_DCTRL_DBLOCKSIZE_Pos)); /* Direction: controller to card (0) */
 
     /* Stage 1: Fast spin (~100 us) for the 43 us wire transfer */
     const uint32_t err_mask = SDIO_STA_DCRCFAIL | SDIO_STA_DTIMEOUT | SDIO_STA_TXUNDERR | SDIO_STA_STBITERR;
+    const uint32_t dma_err_mask = DMA_LISR_TEIF3 | DMA_LISR_DMEIF3 | DMA_LISR_FEIF3;
     uint32_t spin = DMA_FAST_SPIN_COUNT;
-    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3) == 0U) &&
+    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3 | dma_err_mask) == 0U) &&
            (READ_BIT(SDIO->STA, err_mask) == 0U) &&
            (spin > 0U))
     {
@@ -486,7 +472,7 @@ static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
 
     /* Stage 2: Fallback to 1 ms FreeRTOS delay if bus is stalled */
     uint32_t timeout_ms = DMA_WAIT_TIMEOUT_MS;
-    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3) == 0U) &&
+    while ((READ_BIT(DMA2->LISR, DMA_LISR_TCIF3 | dma_err_mask) == 0U) &&
            (READ_BIT(SDIO->STA, err_mask) == 0U) &&
            (timeout_ms > 0U))
     {
@@ -495,20 +481,28 @@ static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
     }
 
     const uint32_t sta = READ_REG(SDIO->STA);
+    const uint32_t lisr = READ_REG(DMA2->LISR);
     CLEAR_BIT(DMA2_Stream3->CR, DMA_SxCR_EN);
 
-    if ((timeout_ms == 0U) || (READ_BIT(sta, err_mask) != 0U))
+    if ((timeout_ms == 0U) || (READ_BIT(sta, err_mask) != 0U) || (READ_BIT(lisr, dma_err_mask) != 0U))
     {
         CLEAR_REG(SDIO->DCTRL);
         WRITE_REG(SDIO->ICR, SDIO_ICR_ALL_FLAGS);
         return RES_ERROR;
     }
 
-    /* Wait for DATAEND / DBCKEND */
+    /* Wait for last 128 bytes in SDIO FIFO to clock out and card CRC token (DATAEND & DBCKEND) */
     uint32_t timeout = 100000U;
-    while ((READ_BIT(SDIO->STA, SDIO_STA_DATAEND | SDIO_STA_DBCKEND) == 0U) && (--timeout > 0U)) {}
+    while((READ_BIT(SDIO->STA, SDIO_STA_DATAEND | err_mask) == 0U) && (--timeout > 0U));
+
+    const uint32_t end_sta = READ_REG(SDIO->STA);
     CLEAR_REG(SDIO->DCTRL);
     WRITE_REG(SDIO->ICR, SDIO_ICR_ALL_FLAGS);
+
+    if((timeout == 0U) || (READ_BIT(end_sta, err_mask) != 0U))
+    {
+        return RES_ERROR;
+    }
 
     /* Wait until card finishes writing internal flash (yields via vTaskDelay if busy) */
     return sdio_wait_ready() ? RES_OK : RES_ERROR;
@@ -568,7 +562,7 @@ static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
     for(UINT i = 0U; i < count; i++)
     {
         DRESULT res;
-        if(is_dma_safe(buff))
+        if(is_DMA_safe(buff, 4U))
         {
             res = sdio_read_block(buff, (uint32_t)(sector + i));
         }
@@ -608,7 +602,7 @@ static DRESULT sdio_write_block(const uint8_t *src, uint32_t sector)
     for (UINT i = 0U; i < count; i++)
     {
         DRESULT res;
-        if (is_dma_safe(buff))
+        if (is_DMA_safe(buff, 4U))
         {
             res = sdio_write_block(buff, (uint32_t)(sector + i));
         }

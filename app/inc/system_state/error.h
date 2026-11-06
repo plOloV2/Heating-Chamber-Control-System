@@ -31,8 +31,14 @@ typedef enum {
     /** @brief CD card subsystem initialization failed */
     SD_CARD_INIT_ERROR = 1U << 3,
 
+    /** @brief CD card read failed */
+    SD_CARD_READ_ERROR = 1U << 4,
+
+    /** @brief CD card write failed */
+    SD_CARD_WRITE_ERROR = 1U << 5,
+
     /** @brief Code executed after vTaskStartScheduler() in main() */
-    RTOS_ERROR = 1U << 4
+    RTOS_ERROR = 1U << 6
 
 } system_error_t;
 
@@ -40,6 +46,6 @@ typedef enum {
 extern volatile system_error_t SystemStatus;
 
 /** @brief Number of all states SystemStatus can be */
-#define SYSTEM_STATES 6
+#define SYSTEM_STATES 8
 
 #endif

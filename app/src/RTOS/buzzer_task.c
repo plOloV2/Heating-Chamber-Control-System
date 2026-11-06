@@ -150,7 +150,7 @@ static void play_melody(const buzzer_note_t melody[])
 
 }
 
-static void check_error(void)
+[[maybe_unused]] static void check_error(void)
 {
 
     if(SystemStatus == NO_ERROR)
@@ -178,20 +178,17 @@ void vBuzzerTask(void *pvParameters)
 
     buzzer_hw_init();
     buzzer_play_tone(0U);
-
-    vTaskSuspend(NULL);
     
+    check_error();
     /** TO DO:
      * wait for all task to initialize, then unlock and check error.
     */
-    check_error();
 
     for (;;)
     {
+
         /* Suspend self until resumed */
         vTaskSuspend(NULL);
-
-        check_error();
 
     }
 
