@@ -55,7 +55,7 @@ const buzzer_note_t RTC_fail[BUZZER_MELODY_NOTES_COUNT] = {
 const buzzer_note_t LCD_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
-    {  880U, 500U },
+    {  880U, 250U },
     {    0U, 500U },
     {  880U, 500U },
     {    0U,   0U },
@@ -64,7 +64,7 @@ const buzzer_note_t LCD_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after SD fail (SystemStatus == SD_CARD_INIT_ERROR). */
-const buzzer_note_t SD_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t SD_init_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
     {  880U, 500U },
@@ -76,7 +76,7 @@ const buzzer_note_t SD_fail[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Signal played after RTOS fail (SystemStatus == RTOS_ERROR). */
-const buzzer_note_t RTOS_fail[BUZZER_MELODY_NOTES_COUNT] = {
+const buzzer_note_t SD_read_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 500U },
     {    0U, 500U },
     {  880U, 250U },
@@ -84,6 +84,18 @@ const buzzer_note_t RTOS_fail[BUZZER_MELODY_NOTES_COUNT] = {
     {  880U, 250U },
     {    0U, 250U },
     {  880U, 500U },
+    {    0U,   0U }
+};
+
+/** @brief Signal played after RTOS fail (SystemStatus == RTOS_ERROR). */
+const buzzer_note_t SD_write_fail[BUZZER_MELODY_NOTES_COUNT] = {
+    {  880U, 500U },
+    {    0U, 500U },
+    {  880U, 250U },
+    {    0U, 250U },
+    {  880U, 500U },
+    {    0U, 500U },
+    {  880U, 250U },
     {    0U,   0U }
 };
 
@@ -116,10 +128,9 @@ const buzzer_note_t * const melodies[] = {
     core_fail,
     RTC_fail,
     LCD_fail,
-    SD_fail,
-    RTOS_fail,
-    stage_done,     //not yet implemented
-    baking_done     //not yet implemented
+    SD_init_fail,
+    SD_read_fail,
+    SD_write_fail
 };
 
 static void play_melody(const buzzer_note_t melody[])
