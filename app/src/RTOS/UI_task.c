@@ -4,6 +4,7 @@
 #include "task.h"
 
 #include "drivers/pin_operations.h"
+#include "drivers/RNG_operations.h"
 #include "GPIO_pins_def.h"
 
 #include "system_state/error.h"
@@ -37,6 +38,8 @@ void vUITask(void *pvParameters)
     (void)pvParameters;
 
     phost = &host;
+
+    rng_hw_init();
 
     for(;;)
     {

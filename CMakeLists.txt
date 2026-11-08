@@ -38,6 +38,7 @@ set(sources_SRCS
     platform/pin_operations.c
     platform/SPI_operations.c
     platform/RTC_operations.c
+    platform/RNG_operations.c
     platform/buzzer_operations.c
 
     middlewares/FreeRTOS/vApplicationStackOverflowHook.c
