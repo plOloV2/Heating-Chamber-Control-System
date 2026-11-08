@@ -28,13 +28,13 @@ typedef enum {
     /** @brief LCD subsystem initialization failed */
     LCD_INIT_ERROR = 1U << 2,
 
-    /** @brief CD card subsystem initialization failed */
+    /** @brief SD card subsystem initialization failed */
     SD_CARD_INIT_ERROR = 1U << 3,
 
-    /** @brief CD card read failed */
+    /** @brief SD card read failed */
     SD_CARD_READ_ERROR = 1U << 4,
 
-    /** @brief CD card write failed */
+    /** @brief SD card write failed */
     SD_CARD_WRITE_ERROR = 1U << 5,
 
     /** @brief Code executed after vTaskStartScheduler() in main() */

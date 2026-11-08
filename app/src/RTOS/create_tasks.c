@@ -12,6 +12,7 @@
 #include "RTOS/UI_task.h"
 #include "mem_location.h"
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 
 
@@ -36,8 +37,19 @@ CCMRAM_BSS static StaticTask_t xUITaskTCB;
 CCMRAM_BSS static StackType_t  xUITaskStack[UI_TASK_STACK_SIZE];
 
 
+/* Semaphores used by UI and SD card to check screen flash */
+SemaphoreHandle_t sd_ready = NULL;
+static StaticSemaphore_t sd_ready_buff;
+
+SemaphoreHandle_t ui_ready = NULL;
+static StaticSemaphore_t ui_ready_buff;
+
+
 /** @brief Calls xTaskCreateStatic() to create RTOS tasks. */
 void create_tasks(void){
+
+    sd_ready = xSemaphoreCreateBinaryStatic(&sd_ready_buff);
+    ui_ready = xSemaphoreCreateBinaryStatic(&ui_ready_buff);
 
     xBuzzerTaskHandle = xTaskCreateStatic(
         vBuzzerTask,

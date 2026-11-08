@@ -15,6 +15,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS   ON)
 set(sources_SRCS
     app/src/main.c
 
+    app/src/EVE4_Riverdi_lib/screen_flash_map.c
     app/src/EVE4_Riverdi_lib/screen_platform.c
     app/src/EVE4_Riverdi_lib/App_Common.c
     app/src/EVE4_Riverdi_lib/CoPro_Cmds.c

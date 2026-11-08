@@ -35,6 +35,9 @@ typedef float		    float_t;
 #include "CoPro_Cmds.h"
 #include "Hal_Utils.h"
 
+/* Custom flash map */
+#include "screen_flash_map.h"
+
 /*****************************************************************************/
 
 typedef enum {

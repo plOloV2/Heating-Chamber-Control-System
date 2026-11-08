@@ -19,6 +19,7 @@
 /** @brief UI state machine state */
 typedef enum{
     INIT_UI,
+    FLASH_BLOB,
     GREETER,
     RTC_SET,
     SETUP_BAKING,
