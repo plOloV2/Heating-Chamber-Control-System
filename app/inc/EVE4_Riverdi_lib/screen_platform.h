@@ -38,6 +38,14 @@ typedef float		    float_t;
 /* Custom flash map */
 #include "screen_flash_map.h"
 
+/* Custom G RAM locations */
+#define BACKGROUND_OFFSET   0U          // size: 130560
+#define LOGO_OFFSET         130560U     // size: 33792
+#define ARROW_OFFSET        164352U     // size: 1024
+#define FAN_OFFSET          165376U     // size: 4096
+#define HEAT_OFFSET         169472U     // size: 4096
+#define KUBICA_OFFSET       173568U     // size: 4096
+
 /*****************************************************************************/
 
 typedef enum {

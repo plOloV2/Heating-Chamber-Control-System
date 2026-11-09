@@ -2,7 +2,9 @@
  * @file SD_task.c
  * @brief Implementation of SD RTOS task controlling SDIO interface (SD Card).
  *
- * @details
+ * @details Implementation of SD card resposible task. Tihs task First reads magic num from
+ * from screen blob in SD_card/screen/screeen_flash.bin and hands it to UI task for screen
+ * flash evaluation. Later logs baking data onto sd card every 5sec.
  *
  * @author Aleksander Dziągwa
  * @date 27.10.2026
@@ -84,7 +86,7 @@ void vSDTask(void *pvParameters){
     (void)xSemaphoreGive(sd_ready);
 
     /** Wait for UI task to compare magic number and set mag_num */
-    if(xSemaphoreTake(ui_ready, pdMS_TO_TICKS(UI_INIT_TIMEOUT_MS)) != pdTRUE)
+    if(xSemaphoreTake(ui_ready, pdMS_TO_TICKS(UI_INIT_TIMEOUT_MS)) == pdTRUE)
     {
         /** If magic number mismatched (mag_num == false), stream whole screen_flash.bin */
         if(!mag_num)
@@ -103,12 +105,18 @@ void vSDTask(void *pvParameters){
     
     for(;;)
     {
+        // Logging to be added in future
         vTaskSuspend(NULL);
     }
 
 }
 
 
+/**
+ * @brief Loads magic numner from screen/screen_flash.bin into data buffer.
+ * 
+ * @returns TRUE if load succeded, FALSE on error.
+ */
 static bool load_screen_magic_num(void)
 {
     /** Get magic num location and size */
@@ -138,6 +146,11 @@ static bool load_screen_magic_num(void)
 }
 
 
+/**
+ * @brief Reads whole screen/screen_flash.bin into data buffer. Synchronized with UI task.
+ * 
+ * @returns TRUE if load succeded, FALSE on error.
+ */
 static bool read_whole_screen_blob(void)
 {
     /** Open screen's binary blob from the beginning */
