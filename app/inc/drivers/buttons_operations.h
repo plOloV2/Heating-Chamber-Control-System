@@ -19,16 +19,14 @@
 #define BUT4_MASK               (1UL << BUT4_PIN)
 #define ALL_BUTTONS_MASK        (BUT1_MASK | BUT2_MASK | BUT3_MASK | BUT4_MASK)
 
-/**
- * @brief Structure holding current state of all buttons (1 = pressed, 0 = not pressed).
- */
+/** @brief Structure holding current state of all buttons (1 = pressed, 0 = not pressed). */
 typedef union {
     struct {
         uint8_t but1     : 1;   /**< Bit 0: BUT1 state (PB0) */
         uint8_t but2     : 1;   /**< Bit 1: BUT2 state (PB1) */
         uint8_t but3     : 1;   /**< Bit 2: BUT3 state (PB2) */
         uint8_t but4     : 1;   /**< Bit 3: BUT4 state (PB10 mapped to bit 3) */
-        uint8_t reserved : 4;   /**< Bits 4..7: Unused padding (always 0) */
+        uint8_t reserved : 4;   /**< Bits 4..7: Unused padding */
     } pressed;
     uint8_t raw;                /**< Combined bitmask (0x00 .. 0x0F) */
 } button_event_t;
