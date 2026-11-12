@@ -5,8 +5,9 @@
  * @file UI_task.h
  * @brief UI control definitions and task interface.
  *
- * @details
- * 
+ * @details This task controlls UI and user inputs via buttons. System should NOT
+ *          depend on this task while running and should run even if this task 
+ *          crashes. 
  *
  * @author Aleksander Dziągwa
  * @date 05.11.2026

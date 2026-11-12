@@ -2,9 +2,8 @@
  * @file ADC_init.c
  * @brief Implementation of ADC1 and DMA2_Stream0 initialization for PT1000 sensors.
  *
- * @details
- * Configures ADC1 to scan IN4..IN7 (PA4..PA7) and transfer results via
- * DMA2_Stream0 (Channel 0) into RAM, generating a DMA interrupt upon completion.
+ * @details Configures ADC1 to scan IN4..IN7 (PA4..PA7) and transfer results via
+ *          DMA2_Stream0 (Channel 0) into RAM, generating a DMA interrupt upon completion.
  *
  * @author Aleksander Dziągwa
  * @date 12.11.2026

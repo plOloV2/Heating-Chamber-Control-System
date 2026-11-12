@@ -2,9 +2,8 @@
  * @file system_init.c
  * @brief Implementation whole system initialization.
  *
- * @details
- * This file holds implementation of main function used to configure MCU.
- * This function calls other functions from /platform directory.
+ * @details This file holds implementation of main function used to configure MCU.
+ *          This function calls other functions from /platform directory.
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026
@@ -32,8 +31,9 @@ volatile system_init_status_t SystemInitStatus = SYSTEM_INIT_STATUS_OK;
 system_init_status_t configure_main_clock(void);
 system_init_status_t configure_rtc_clock(void);
 void configure_gpio(void);
-void SystemCoreClockUpdate(void);
+void configure_timers(void);
 void reset_clock_tree(void);
+void SystemCoreClockUpdate(void);
 
 
 /** @brief Main configuration function, calls function from other _init.c files and configures MCU. */
@@ -51,6 +51,8 @@ void SystemInit(void)
     configure_gpio();
 
     NVIC_SetPriorityGrouping(7U - __NVIC_PRIO_BITS);
+
+    configure_timers();
     
     SystemInitStatus = (system_init_status_t)((uint32_t)main_clock_status | (uint32_t)rtc_clock_status);
     

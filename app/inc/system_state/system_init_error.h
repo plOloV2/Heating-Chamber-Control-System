@@ -5,9 +5,6 @@
  * @file system_init_error.h
  * @brief Definition of system_init_status_t enum, holds current state of system initialization.
  *
- * @details
- * This file provides definitions and brief descriptions of all system initialization states.
- *
  * @author Aleksander Dziągwa
  * @date 20.10.2026
  */

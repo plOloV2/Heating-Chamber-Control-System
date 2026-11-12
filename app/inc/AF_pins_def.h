@@ -5,9 +5,6 @@
  * @file AF_pins_def.h
  * @brief Definition of STM32 AF pins.
  *
- * @details
- * This file provides definitions of ports, pins, and Alternate Functions for all AF pins.
- *
  * @author Aleksander Dziągwa
  * @date 22.10.2026
  */

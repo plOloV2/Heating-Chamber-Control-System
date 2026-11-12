@@ -10,6 +10,7 @@
  */
 
 #include "stm32f4xx.h"
+#include "mem_location.h"
 #include "drivers/ADC_operations.h"
 
 #include "FreeRTOS.h"
@@ -17,7 +18,7 @@
 
 #include "RTOS/temp_task.h"
 
-volatile uint16_t TempAdcRaw[TEMP_SENSOR_COUNT] = {0U, 0U, 0U, 0U};
+DMA_BUFFER volatile uint16_t TempAdcRaw[TEMP_SENSOR_COUNT];
 
 /** @brief Start a single 4-channel ADC1 scan transferred by DMA2_Stream0 */
 void start_temp_dma_read(void)

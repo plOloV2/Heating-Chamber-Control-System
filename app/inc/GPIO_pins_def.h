@@ -5,9 +5,6 @@
  * @file GPIO_pins_def.h
  * @brief Definition of STM32 GPIO inputs/outputs.
  *
- * @details
- * This file provides definitions of ports, pins, and active states for all GPIO inputs/outputs.
- *
  * @author Aleksander Dziągwa
  * @date 8.10.2026
  */

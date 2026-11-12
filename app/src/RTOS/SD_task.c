@@ -3,8 +3,8 @@
  * @brief Implementation of SD RTOS task controlling SDIO interface (SD Card).
  *
  * @details Implementation of SD card resposible task. Tihs task First reads magic num from
- * from screen blob in SD_card/screen/screeen_flash.bin and hands it to UI task for screen
- * flash evaluation. Later logs baking data onto sd card every 5sec.
+ *          from screen blob in SD_card/screen/screeen_flash.bin and hands it to UI task for screen
+ *          flash evaluation. Later logs baking data onto sd card every 5sec.
  *
  * @author Aleksander Dziągwa
  * @date 27.10.2026

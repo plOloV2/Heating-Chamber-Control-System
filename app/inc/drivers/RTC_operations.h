@@ -3,7 +3,7 @@
 
 /**
  * @file RTC_operation.h
- * @brief Definition of functions used to RTC.
+ * @brief Definition of functions used to interact with RTC.
  *
  * @author Aleksander Dziągwa
  * @date 27.10.2026

@@ -3,10 +3,7 @@
 
 /**
  * @file system_clocks.h
- * @brief Definition of system clocks speeds.
- *
- * @details
- * This file provides definitions of system clocks speeds if they haven't been defined yet.
+ * @brief Definition of system clocks speeds if they haven't been defined yet.
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026

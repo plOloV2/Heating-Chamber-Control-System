@@ -5,8 +5,7 @@
  * @file furnace_structs.h
  * @brief Definition of main data struct cotroling baking.
  *
- * @details
- * This file defines most important data structure, which stores baking stages info.
+ * @details This file defines most important data structure, which stores baking stages info.
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026

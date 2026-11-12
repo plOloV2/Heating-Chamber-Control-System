@@ -1,3 +1,11 @@
+/**
+ * @file RTC_operation.c
+ * @brief Implementation of functions used to interact with RTC.
+ *
+ * @author Aleksander Dziągwa
+ * @date 27.10.2026
+ */
+
 #include "stm32f4xx.h"
 #include "drivers/RTC_operations.h"
 #include "system_state/system_init_error.h"

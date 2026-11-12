@@ -1,8 +1,6 @@
 /**
  * @file buzzer_task.c
- * @brief Implementation of buzzer RTOS task controlling passive buzzer via PWM.
- *
- * @details
+ * @brief Implementation of buzzer RTOS task controlling passive buzzer via TIM2's PWM.
  *
  * @author Aleksander Dziągwa
  * @date 23.10.2026
@@ -161,7 +159,7 @@ static void play_melody(const buzzer_note_t melody[])
 
 }
 
-[[maybe_unused]] static void check_error(void)
+static void check_error(void)
 {
 
     if(SystemStatus == NO_ERROR)

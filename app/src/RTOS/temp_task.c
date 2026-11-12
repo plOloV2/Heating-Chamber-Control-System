@@ -1,4 +1,17 @@
+/**
+ * @file temp_task.c
+ * @brief Temperature conversion task implementation.
+ *
+ * @details This task is waken up every second by DMA2 interrupt.
+ *          It converts raw ADC1 readings into actual temperature values
+ *          in Celsius and wakes up Controll task later.
+ *
+ * @author Aleksander Dziągwa
+ * @date 25.10.2026
+ */
+
 #include <stdint.h>
+#include "mem_location.h"
 #include "drivers/ADC_operations.h"
 
 #include "FreeRTOS.h"
@@ -6,7 +19,7 @@
 
 #include "RTOS/temp_task.h"
 
-volatile float TempReal[TEMP_SENSOR_COUNT] = {-100.0f, -100.0f, -100.0f, -100.0f};
+CCMRAM_DATA volatile float TempReal[TEMP_SENSOR_COUNT] = {-100.0f, -100.0f, -100.0f, -100.0f};
 
 #define LUT_START_TEMP  -30
 #define LUT_END_TEMP    200

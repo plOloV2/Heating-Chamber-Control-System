@@ -2,9 +2,6 @@
  * @file pin_init.c
  * @brief Implementation of GPIO pins initialization.
  *
- * @details
- * This file holds implementation of functions used to configure GPIO pins.
- *
  * @author Aleksander Dziągwa
  * @date 20.10.2026
  */

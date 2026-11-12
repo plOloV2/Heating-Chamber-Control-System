@@ -1,13 +1,13 @@
+#ifndef RNG_OPERATIONS_H
+#define RNG_OPERATIONS_H
+
 /**
- * @file rng_operations.h
- * 
+ * @file RNG_operations.h
  * @brief Hardware RNG driver for STM32F4.
  * 
  * @author Aleksander Dziągwa
  * @date 8.11.2026
  */
-#ifndef RNG_OPERATIONS_H
-#define RNG_OPERATIONS_H
 
 #include <stdint.h>
 

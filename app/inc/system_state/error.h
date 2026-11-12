@@ -5,9 +5,6 @@
  * @file error.h
  * @brief Definition of system_error_t enum, holds current error state of system.
  *
- * @details
- * This file provides definitions and brief descriptions of all main system error states.
- *
  * @author Aleksander Dziągwa
  * @date 20.10.2026
  */

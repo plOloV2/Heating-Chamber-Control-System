@@ -1,9 +1,6 @@
 /**
- * @file rtc_init.c
+ * @file RTC_init.c
  * @brief Implementation of RTC clock initialization.
- *
- * @details
- * This file holds implementation of functions used to configure RTC clock.
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026

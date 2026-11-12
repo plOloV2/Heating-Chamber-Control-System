@@ -3,10 +3,10 @@
 
 /**
  * @file mem_location.h
- * @brief Definition of alternative locations for data.
+ * @brief Definition of alternative locations for data and function to check if buffer is safe for DMA.
  *
- * @details
- * This file provides definitions used to place data in CCMRAM and in special DMA BUFFER regions of memory.
+ * @details This file provides definitions used to place data in CCMRAM and in special DMA BUFFER regions of memory.
+ *          Also implemets is_DMA_safe() function to check if given buffer lies inside SRAM and is properly aligned.
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026

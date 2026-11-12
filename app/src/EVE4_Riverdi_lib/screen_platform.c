@@ -2,20 +2,18 @@
  * @file screen_platform.c
  * @brief Low-level platform implementation for Riverdi EVE4 (BT817) library.
  *
- * @details
- * Implements hardware interface routines required by EVE HAL layer,
- * utilizing drivers/SPI_operations.h, drivers/pin_operations.h,
- * AF_pins_def.h, and GPIO_pins_def.h without direct register manipulation.
+ * @details Implements hardware interface routines required by EVE HAL layer,
+ *          utilizing drivers/SPI_operations.h, drivers/pin_operations.h,
+ *          and GPIO_pins_def.h.
  *
  * @author Aleksander Dziągwa
  * @date 01.11.2026
  */
 
 #include "EVE4_Riverdi_lib/screen_platform.h"
-#include "AF_pins_def.h"
-#include "GPIO_pins_def.h"
 #include "drivers/pin_operations.h"
 #include "drivers/SPI_operations.h"
+#include "GPIO_pins_def.h"
 
 #include "FreeRTOS.h"
 #include "task.h"

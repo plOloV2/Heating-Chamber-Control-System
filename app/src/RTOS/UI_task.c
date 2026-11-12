@@ -3,7 +3,8 @@
  * @brief Implementation of UI RTOS task controlling screen and user inputs.
  *
  * @details Implements state machine resposible for controlling main screen and user inputs.
- * Synchronizes with SD to check and optionaly flash screen memory.
+ *          Synchronizes with SD to check and optionaly flash screen memory. System should NOT
+ *          depend on this task while running and should run even if this task crashes.
  *
  * @author Aleksander Dziągwa
  * @date 5.11.2026

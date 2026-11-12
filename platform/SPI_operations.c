@@ -1,6 +1,9 @@
 /**
  * @file SPI_operations.c
  * @brief Implementation of low-level SPI2 driver with DMA1 and FreeRTOS support.
+ * 
+ * @author Aleksander Dziągwa
+ * @date 01.11.2026
  */
 
 #include <stddef.h>

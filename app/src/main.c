@@ -1,11 +1,20 @@
+/**
+ * @file main.c
+ * @brief Implementation of main function of oven controll system.
+ *
+ * @details main() prepares system before FreeRTOS kernel and tasks take controll.
+ *
+ * @author Aleksander Dziągwa
+ * @date 23.08.2026
+ */
+
 #include "stm32f4xx.h"
 
 #include "system_state/system_init_error.h"
 #include "system_state/error.h"
-#include "version.h"
 #include "GPIO_pins_def.h"
-#include "drivers/pin_operations.h"
 
+#include "drivers/pin_operations.h"
 
 #include "FreeRTOS.h"
 #include "task.h"

@@ -1,6 +1,9 @@
 /**
- * @file rng_operations.c
+ * @file RNG_operations.c
  * @brief Implementation of STM32F4 hardware RNG driver.
+ * 
+ * @author Aleksander Dziągwa
+ * @date 8.11.2026
  */
 #include "drivers/RNG_operations.h"
 #include "stm32f4xx.h"

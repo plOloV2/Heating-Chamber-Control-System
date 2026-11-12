@@ -1,9 +1,6 @@
 /**
  * @file clock_info.c
- * @brief Implementation of system core clock speed update function.
- *
- * @details
- * This function updates SystemCoreClock and sets it to curent clock speed in Hz.
+ * @brief This function updates SystemCoreClock and sets it to curent clock speed in Hz. 
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026

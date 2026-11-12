@@ -2,9 +2,6 @@
  * @file clock_init.c
  * @brief Implementation of system core clock initialization.
  *
- * @details
- * This file holds implementation of functions used to configure main system clock.
- *
  * @author Aleksander Dziągwa
  * @date 20.10.2026
  */
