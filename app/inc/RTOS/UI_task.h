@@ -28,16 +28,6 @@ typedef enum{
     UI_ERROR
 } UI_states;
 
-
-/** @brief   */
-typedef enum{
-    BUT1_FLAG = 1U << 0U,
-    BUT2_FLAG = 1U << 1U,
-    BUT3_FLAG = 1U << 2U,
-    BUT4_FLAG = 1U << 3U
-} button_flags;
-extern volatile button_flags ButtonState;
-
 /** @brief Stack size for the UI RTOS task */
 #define UI_TASK_STACK_SIZE 1024U
 

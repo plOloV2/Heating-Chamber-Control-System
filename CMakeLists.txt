@@ -35,11 +35,13 @@ set(sources_SRCS
     platform/clock_init.c
     platform/clock_info.c
     platform/system_init.c
+    platform/buttons_init.c
     platform/pin_operations.c
     platform/SPI_operations.c
     platform/RTC_operations.c
     platform/RNG_operations.c
     platform/buzzer_operations.c
+    platform/buttons_operations.c
 
     middlewares/FreeRTOS/vApplicationStackOverflowHook.c
     middlewares/FatFs/source/diskio.c

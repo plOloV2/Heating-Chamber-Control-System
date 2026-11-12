@@ -14,6 +14,7 @@
 #include "semphr.h"
 #include "task.h"
 
+#include "drivers/buttons_operations.h"
 #include "drivers/pin_operations.h"
 #include "drivers/RNG_operations.h"
 #include "drivers/RTC_operations.h"
@@ -66,6 +67,7 @@ void vUITask(void *pvParameters)
     phost = &host;
 
     rng_hw_init();
+    configure_buttons();
 
     for(;;)
     {
