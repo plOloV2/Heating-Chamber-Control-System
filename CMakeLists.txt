@@ -30,12 +30,15 @@ set(sources_SRCS
 
     startup/startup_stm32f405.c
 
+    platform/ADC_init.c
     platform/pin_init.c
     platform/RTC_init.c
     platform/clock_init.c
     platform/clock_info.c
     platform/system_init.c
+    platform/timers_init.c
     platform/buttons_init.c
+    platform/ADC_operations.c
     platform/pin_operations.c
     platform/SPI_operations.c
     platform/RTC_operations.c

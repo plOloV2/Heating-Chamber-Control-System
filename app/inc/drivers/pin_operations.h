@@ -5,9 +5,8 @@
  * @file pin_operation.h
  * @brief Definition of functions to change GPIO pins state.
  *
- * @details
- * This file provides definitions of functions to toggle and set GPIO pins state.
- * Should be used with definitions provided by GPIO_pins_def.h.h
+ * @details This file provides definitions of functions to toggle and set GPIO pins state.
+ *          Should be used with definitions provided by GPIO_pins_def.h
  *
  * @author Aleksander Dziągwa
  * @date 20.10.2026

@@ -1,7 +1,12 @@
 #include <stdint.h>
-#include "mem_location.h"
+#include "drivers/ADC_operations.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
+
+#include "RTOS/temp_task.h"
+
+volatile float TempReal[TEMP_SENSOR_COUNT] = {-100.0f, -100.0f, -100.0f, -100.0f};
 
 #define LUT_START_TEMP  -30
 #define LUT_END_TEMP    200
@@ -59,7 +64,7 @@ const float LUT_ADC[LUT_SIZE] = {
 
 
 /** @brief Uses LUT_ADC to convert raw ADC value to Celsius. */
-__attribute__((unused)) static float Look_Up_Table_Calc(uint16_t raw_value){
+static float Look_Up_Table_Calc(uint16_t raw_value){
 
     float ADC_read = (float)raw_value;
 
@@ -97,18 +102,19 @@ __attribute__((unused)) static float Look_Up_Table_Calc(uint16_t raw_value){
     
 }
 
+
 void vTempTask(void *pvParameters){
     (void)pvParameters;
 
-    for (;;)
+    while(true)
     {
-        /* Suspend self until waken up / resumed */
+        /* Suspend self until resumed by DMA2 interrupt */
         vTaskSuspend(NULL);
 
-        // for(size_t i = 0; i < NUM_PT1000; i++)
-        // {
-            
-        // }
+        for(size_t i = 0; i < TEMP_SENSOR_COUNT; i++)
+        {
+            TempReal[i] = Look_Up_Table_Calc(TempAdcRaw[i]);
+        }
 
     }
 

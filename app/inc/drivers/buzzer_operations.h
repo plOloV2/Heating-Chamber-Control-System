@@ -5,8 +5,6 @@
  * @file buzzer_operations.h
  * @brief Definition of buzzer driver functions.
  *
- * @details Defines functions that are ptovided by buzzer driver in buzzer_operations.c file.
- *
  * @author Aleksander Dziągwa
  * @date 25.10.2026
  */

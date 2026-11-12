@@ -5,9 +5,6 @@
  * @file RTC_operation.h
  * @brief Definition of functions used to RTC.
  *
- * @details
- * This file provides definitions of functions to 
- *
  * @author Aleksander Dziągwa
  * @date 27.10.2026
  */

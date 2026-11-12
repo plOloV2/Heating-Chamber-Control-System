@@ -5,9 +5,8 @@
  * @file buzzer_task.h
  * @brief Buzzer control definitions and task interface.
  *
- * @details
- * Defines the note structure (frequency in Hz, duration in ms)
- * and the RTOS task controlling the passive buzzer via PWM (TIM2 CH3).
+ * @details Defines the note structure (frequency in Hz, duration in ms)
+ *          and the RTOS task controlling the passive buzzer via PWM (TIM2 CH3).
  *
  * @author Aleksander Dziągwa
  * @date 23.10.2026

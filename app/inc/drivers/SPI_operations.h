@@ -5,9 +5,8 @@
  * @file SPI_operations.h
  * @brief Definition of low-level SPI driver functions for STM32F405.
  *
- * @details
- * This file provides low level driver functions to initialize, deinitialize,
- * and transfer data over the SPI2 interface connected to the EVE display.
+ * @details This file provides low level driver functions to initialize, deinitialize,
+ *          and transfer data over the SPI2 interface connected to the EVE display.
  *
  * @author Aleksander Dziągwa
  * @date 01.11.2026
