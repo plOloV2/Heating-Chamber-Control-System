@@ -54,7 +54,10 @@ void DMA2_Stream0_IRQHandler(void)
         DMA2->LIFCR = DMA_LIFCR_CTCIF0 | DMA_LIFCR_CHTIF0;
 
         /* Resume Temp task to convert raw readings into actual values */
-        xTaskResumeFromISR(xTempTaskHandle);
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        vTaskNotifyGiveFromISR(xTempTaskHandle, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        
     }
 
 }

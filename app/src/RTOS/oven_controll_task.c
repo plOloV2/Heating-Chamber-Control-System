@@ -15,10 +15,12 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "stm32f4xx.h"
 #include "GPIO_pins_def.h"
 #include "furnace_struck.h"
 #include "RTOS/temp_task.h"
 #include "drivers/pin_operations.h"
+#include "drivers/IWDG_operations.h"
 #include "RTOS/oven_controll_task.h"
 
 /**
@@ -50,10 +52,22 @@ void vOvenControllTask(void *pvParameters)
     float prev_temp   = 0.0f;
     bool  first_run   = true;
 
+    /** Wait to be waken up by UI task to start baking */
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+    /** Start TIM7 1s continuous counter */
+    SET_BIT(TIM7->CR1, TIM_CR1_CEN);
+
+    /** Start 5s watchdog */
+    configure_iwdg();
+
     while(true)
     {
         /** Wait to be resumed by temperature task (every 1 second) */
-        vTaskSuspend(NULL);
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+        /** Reload the watchdog */
+        reload_iwdg();
 
         /** Update average temp, timers, stage transitions, and target_temp */
         UpdateCurrentState(&target_temp, &first_run, &prev_temp);

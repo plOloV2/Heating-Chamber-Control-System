@@ -127,7 +127,7 @@ void vTempTask(void *pvParameters)
     while(true)
     {
         /* Suspend self until resumed by DMA2 interrupt */
-        vTaskSuspend(NULL);
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
         /* Calculate real values from raw readings */
         for(size_t i = 0; i < TEMP_SENSOR_COUNT; i++)
@@ -136,7 +136,7 @@ void vTempTask(void *pvParameters)
         }
 
         /* Resume oven controll to decide what to do with new readings */
-        vTaskResume(xOvenControllTaskHandle);
+        xTaskNotifyGive(xOvenControllTaskHandle);
 
     }
 

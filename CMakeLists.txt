@@ -34,6 +34,7 @@ set(sources_SRCS
     platform/ADC_init.c
     platform/pin_init.c
     platform/RTC_init.c
+    platform/IWDG_init.c
     platform/clock_init.c
     platform/clock_info.c
     platform/system_init.c
@@ -48,8 +49,9 @@ set(sources_SRCS
     platform/buttons_operations.c
 
     middlewares/FreeRTOS/vApplicationStackOverflowHook.c
-    middlewares/FatFs/source/diskio.c
+    
     middlewares/FatFs/source/ff.c
+    middlewares/FatFs/source/diskio.c
     middlewares/FatFs/source/ffsystem.c
     middlewares/FatFs/source/ffunicode.c
 )
