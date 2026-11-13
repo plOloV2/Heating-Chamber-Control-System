@@ -15,6 +15,9 @@
 
 void rng_hw_init(void)
 {
+    /* Ebable RNG clock */
+    SET_BIT(RCC->AHB2ENR, RCC_AHB2ENR_RNGEN);
+    (void)READ_REG(RCC->AHB2ENR);
     /* Enable the RNG peripheral */
     SET_BIT(RNG->CR, RNG_CR_RNGEN);
 }

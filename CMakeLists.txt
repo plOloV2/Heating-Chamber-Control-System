@@ -27,6 +27,7 @@ set(sources_SRCS
     app/src/RTOS/temp_task.c
     app/src/RTOS/buzzer_task.c
     app/src/RTOS/create_tasks.c
+    app/src/RTOS/oven_controll_task.c
 
     startup/startup_stm32f405.c
 

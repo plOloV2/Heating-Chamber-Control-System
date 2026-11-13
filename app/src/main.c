@@ -23,6 +23,7 @@
 
 
 CCMRAM_BSS furnace_stage_data Stages[MAX_STAGES];
+CCMRAM_BSS volatile furnace_current_info Furnace_state;
 
 volatile bool RTC_valid = false;
 volatile system_error_t SystemStatus = NO_ERROR;
@@ -64,8 +65,12 @@ void SystemStatus_update_start(void){
     /** Initialized without problems, noting to do */
     if(SystemInitStatus == SYSTEM_INIT_STATUS_OK)
     {
-        RTC_valid = true;
         return;
+    }
+
+    if(READ_BIT(SystemInitStatus, (SYSTEM_INIT_STATUS_LSE_TIMEOUT | SYSTEM_INIT_STATUS_LSE_NINIT)) == 0U)
+    {
+        RTC_valid = true;
     }
 
     /** Some init error ocured */

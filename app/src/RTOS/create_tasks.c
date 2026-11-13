@@ -6,6 +6,7 @@
  * @date 20.10.2026
  */
 
+#include "RTOS/oven_controll_task.h"
 #include "RTOS/buzzer_task.h"
 #include "RTOS/temp_task.h"
 #include "RTOS/SD_task.h"
@@ -36,6 +37,11 @@ CCMRAM_BSS TaskHandle_t xUITaskHandle = NULL;
 CCMRAM_BSS static StaticTask_t xUITaskTCB;
 CCMRAM_BSS static StackType_t  xUITaskStack[UI_TASK_STACK_SIZE];
 
+/* Static memory allocation for Oven Control task */
+CCMRAM_BSS TaskHandle_t xOvenControllTaskHandle = NULL;
+CCMRAM_BSS static StaticTask_t xOvenControllTaskTCB;
+CCMRAM_BSS static StackType_t  xOvenControllTaskStack[OVEN_CONTROLL_TASK_STACK_SIZE];
+
 
 /* Semaphores used by UI and SD card to check screen flash */
 SemaphoreHandle_t sd_ready = NULL;
@@ -56,7 +62,7 @@ void create_tasks(void){
         "Buzzer",
         BUZZER_TASK_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY + 2U,
+        tskIDLE_PRIORITY + 1U,
         xBuzzerTaskStack,
         &xBuzzerTaskTCB
     );
@@ -66,7 +72,7 @@ void create_tasks(void){
         "Temp conv",
         TEMP_TASK_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY + 1U,
+        tskIDLE_PRIORITY + 3U,
         xTempTaskStack,
         &xTempTaskTCB
     );
@@ -76,7 +82,7 @@ void create_tasks(void){
         "SD Card",
         SD_TASK_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY + 3U,
+        tskIDLE_PRIORITY + 2U,
         xSDTaskStack,
         &xSDTaskTCB
     );
@@ -86,9 +92,19 @@ void create_tasks(void){
         "UI",
         UI_TASK_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY + 3U,
+        tskIDLE_PRIORITY + 2U,
         xUITaskStack,
         &xUITaskTCB
+    );
+
+    xOvenControllTaskHandle = xTaskCreateStatic(
+        vOvenControllTask,
+        "control",
+        OVEN_CONTROLL_TASK_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY + 3U,
+        xOvenControllTaskStack,
+        &xOvenControllTaskTCB
     );
 
 }

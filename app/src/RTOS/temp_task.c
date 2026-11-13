@@ -18,6 +18,7 @@
 #include "task.h"
 
 #include "RTOS/temp_task.h"
+#include "RTOS/oven_controll_task.h"
 
 CCMRAM_DATA volatile float TempReal[TEMP_SENSOR_COUNT] = {-100.0f, -100.0f, -100.0f, -100.0f};
 
@@ -116,18 +117,26 @@ static float Look_Up_Table_Calc(uint16_t raw_value){
 }
 
 
-void vTempTask(void *pvParameters){
+void vTempTask(void *pvParameters)
+{
     (void)pvParameters;
+
+    /* Configure DMA and ADC before using it */
+    configure_adc_dma();
 
     while(true)
     {
         /* Suspend self until resumed by DMA2 interrupt */
         vTaskSuspend(NULL);
 
+        /* Calculate real values from raw readings */
         for(size_t i = 0; i < TEMP_SENSOR_COUNT; i++)
         {
             TempReal[i] = Look_Up_Table_Calc(TempAdcRaw[i]);
         }
+
+        /* Resume oven controll to decide what to do with new readings */
+        vTaskResume(xOvenControllTaskHandle);
 
     }
 
