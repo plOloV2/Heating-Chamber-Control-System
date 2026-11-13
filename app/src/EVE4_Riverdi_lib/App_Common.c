@@ -159,6 +159,8 @@ void App_Calibrate_Screen(Gpu_Hal_Context_t *phost) {
 
 /******************************************************************************/
 
+void spi_set_high_speed(bool high_speed);
+
 bool App_Common_Init(Gpu_Hal_Context_t *phost) {
 	Gpu_HalInit_t halinit;
 	uint8_t chipid;
@@ -249,6 +251,9 @@ bool App_Common_Init(Gpu_Hal_Context_t *phost) {
 	Gpu_Hal_Wr8(phost, REG_PCLK, DispPCLK);
 
 	phost->cmd_fifo_wp = Gpu_Hal_Rd16(phost, REG_CMD_WRITE);
+
+	/** Set SPI into high speed */
+    spi_set_high_speed(true);
 
 	return true;
 }
