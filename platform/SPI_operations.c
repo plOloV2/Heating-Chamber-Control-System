@@ -298,12 +298,12 @@ void DMA1_Stream3_IRQHandler(void)
 static uint16_t spi_poll_transfer(const uint8_t *tx_data, uint8_t *rx_data, uint16_t size)
 {
     /** Loop thru TX and RX data size times. */
-    for (uint16_t i = 0U; i < size; i++)
+    for(uint16_t i = 0U; i < size; i++)
     {
         /** Check if transmit buffer is empty. */
         uint32_t timeout = SPI_TIMEOUT_COUNT;
-        while ((READ_BIT(SPI2->SR, SPI_SR_TXE) == 0U) && (--timeout != 0U)) {}
-        if (timeout == 0U)
+        while((READ_BIT(SPI2->SR, SPI_SR_TXE) == 0U) && (--timeout != 0U));
+        if(timeout == 0U)
         {
             spi_clear_ovr();
             return i;
@@ -314,8 +314,8 @@ static uint16_t spi_poll_transfer(const uint8_t *tx_data, uint8_t *rx_data, uint
 
         /** Wait for data from slave */
         timeout = SPI_TIMEOUT_COUNT;
-        while ((READ_BIT(SPI2->SR, SPI_SR_RXNE) == 0U) && (--timeout != 0U)) {}
-        if (timeout == 0U)
+        while((READ_BIT(SPI2->SR, SPI_SR_RXNE) == 0U) && (--timeout != 0U));
+        if(timeout == 0U)
         {
             spi_clear_ovr();
             return i;
@@ -323,7 +323,7 @@ static uint16_t spi_poll_transfer(const uint8_t *tx_data, uint8_t *rx_data, uint
 
         /** Load received data into rx_data[] if rx_data != NULL. */
         uint8_t received = (uint8_t)(SPI2->DR);
-        if (rx_data != NULL)
+        if(rx_data != NULL)
         {
             rx_data[i] = received;
         }

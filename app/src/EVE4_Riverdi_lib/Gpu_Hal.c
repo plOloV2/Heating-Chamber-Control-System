@@ -755,10 +755,32 @@ Gpu_Hal_CheckCmdBuffer (Gpu_Hal_Context_t  *host,
 void
 Gpu_Hal_WaitCmdfifo_empty (Gpu_Hal_Context_t *host)
 {
-  while(Gpu_Hal_Rd16(host,REG_CMD_READ) != Gpu_Hal_Rd16(host,REG_CMD_WRITE));
+    while(true)
+    {
+        uint16_t rd = Gpu_Hal_Rd16(host, REG_CMD_READ);
+        if(rd == 0x0FFFU)
+        {
+            /* Coprocessor faulted: reset and recover coprocessor engine (BT81X Guide Sec 5.1) */
+            Gpu_Hal_Wr8(host, REG_CPURESET, 1U);
+            Gpu_Hal_Wr16(host, REG_CMD_READ, 0U);
+            Gpu_Hal_Wr16(host, REG_CMD_WRITE, 0U);
+            Gpu_Hal_Wr16(host, REG_CMD_DL, 0U);
+            Gpu_Hal_Wr8(host, REG_CPURESET, 0U);
+            Gpu_Hal_Wr8(host, REG_PCLK, DispPCLK);
+            host->cmd_fifo_wp = 0U;
+            break;
+        }
+        if(rd == Gpu_Hal_Rd16(host, REG_CMD_WRITE))
+        {
+            break;
+        }
 
-  host->cmd_fifo_wp = Gpu_Hal_Rd16(host,REG_CMD_WRITE);
+    }
+
+    host->cmd_fifo_wp = Gpu_Hal_Rd16(host, REG_CMD_WRITE);
+    
 }
+
 
 
 /*

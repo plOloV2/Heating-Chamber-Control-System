@@ -62,12 +62,7 @@ __attribute__((noreturn)) int main(){
  */
 void SystemStatus_update_start(void){
 
-    /** Initialized without problems, noting to do */
-    if(SystemInitStatus == SYSTEM_INIT_STATUS_OK)
-    {
-        return;
-    }
-
+    /** Mark RTC clock valid */
     if(READ_BIT(SystemInitStatus, (SYSTEM_INIT_STATUS_LSE_TIMEOUT | SYSTEM_INIT_STATUS_LSE_NINIT)) == 0U)
     {
         RTC_valid = true;
