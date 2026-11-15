@@ -23,11 +23,16 @@ set(sources_SRCS
     app/src/EVE4_Riverdi_lib/Gpu_Hal.c
     
     app/src/RTOS/SD_task.c
-    app/src/RTOS/UI_task.c
     app/src/RTOS/temp_task.c
     app/src/RTOS/buzzer_task.c
     app/src/RTOS/create_tasks.c
     app/src/RTOS/oven_controll_task.c
+
+    app/src/RTOS/UI_task.c
+    app/src/RTOS/UI/UI_screen_RTC.c
+    app/src/RTOS/UI/UI_flash_assets.c
+    app/src/RTOS/UI/UI_screen_setup.c
+    app/src/RTOS/UI/UI_screen_baking.c
 
     startup/startup_stm32f405.c
 
@@ -93,7 +98,7 @@ set(GLOBAL_FLAG_C
 
 # Set config flags
 set(CMAKE_C_FLAGS_DEBUG             "-Og -ggdb3")
-set(CMAKE_C_FLAGS_RELEASE           "-O3 -DNDEBUG -flto=auto")
+set(CMAKE_C_FLAGS_RELEASE           "-O2 -DNDEBUG -flto=auto")
 
 # Set global flags
 add_compile_options(${CPU_PARAMS} ${ERROR_FLAGS} ${GLOBAL_FLAG_C})
