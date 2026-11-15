@@ -98,4 +98,12 @@ void UI_RenderSetupBakingScreen(Gpu_Hal_Context_t *phost);
  */
 void UI_RenderBakingScreen(Gpu_Hal_Context_t *phost, bool flash_ok);
 
+/**
+ * @brief Renders screen at the end of baking using EVE4 lib.
+ * 
+ * @param phost Pointer to host for EVE4 library
+ * @param flash_ok Flag symbolising status of magic num check
+ */
+void UI_RenderEndBakingScreen(Gpu_Hal_Context_t *phost, bool flash_ok);
+
 #endif

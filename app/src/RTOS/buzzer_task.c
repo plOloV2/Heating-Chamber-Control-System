@@ -9,9 +9,12 @@
 #include "drivers/buzzer_operations.h"
 #include "system_state/error.h"
 #include "RTOS/buzzer_task.h"
-#include "mem_location.h"
+#include "furnace_struck.h"
 #include "FreeRTOS.h"
 #include "task.h"
+
+/** @brief Number of error melodies in lookup table. */
+#define ERROR_MELODIES_COUNT    6U
 
 /** @brief Signal played after succesful system initialization (SystemStatus == NO_ERROR). */
 const buzzer_note_t ready_to_bake[BUZZER_MELODY_NOTES_COUNT] = {
@@ -122,7 +125,7 @@ const buzzer_note_t baking_done[BUZZER_MELODY_NOTES_COUNT] = {
 };
 
 /** @brief Look up table for melodies. */
-const buzzer_note_t * const melodies[] = {
+const buzzer_note_t * const melodies[ERROR_MELODIES_COUNT] = {
     core_fail,
     RTC_fail,
     LCD_fail,
@@ -161,18 +164,70 @@ static void play_melody(const buzzer_note_t melody[])
 
 static void check_error(void)
 {
+    /** Bitmask of error flags that have already been signaled */
+    static uint32_t signaled_errors = 0U;
 
-    if(SystemStatus == NO_ERROR)
+    /** Isolate only error bits that have not been played yet */
+    const uint32_t new_errors = SystemStatus & ~signaled_errors;
+
+    if(new_errors == 0U)
     {
-        play_melody(ready_to_bake);
         return;
     }
 
-    for(size_t i = 0; i < SYSTEM_STATES; i++){
-        if((SystemStatus & (1U << i)) != 0U)
+    for(size_t i = 0U; i < ERROR_MELODIES_COUNT; i++)
+    {
+        const uint32_t error_mask = (1UL << i);
+
+        if((new_errors & error_mask) != 0U)
         {
+            /** Latch bit so this error will not be signaled again */
+            signaled_errors |= error_mask;
+
             play_melody(melodies[i]);
-            vTaskDelay(pdMS_TO_TICKS(2500));
+            vTaskDelay(pdMS_TO_TICKS(2500U));
+        }
+
+    }
+
+}
+
+/** @brief Checks if a baking stage or the entire baking process has ende. */
+static void check_stage_end(void)
+{
+    static uint8_t last_stage_id       = 0U;
+    static bool    baking_done_played  = false;
+
+    const uint8_t stages_num = Furnace_state.stages_num;
+    const uint8_t stage_id   = Furnace_state.stage_ID;
+
+    /** Do nothing until user finishes configuring stages in SETUP_BAKING */
+    if(stages_num == 0U)
+    {
+        last_stage_id      = 0U;
+        baking_done_played = false;
+        return;
+    }
+
+    /** Detect if stage_ID has advanced since last 250ms check */
+    if(stage_id != last_stage_id)
+    {
+        last_stage_id = stage_id;
+
+        if(stage_id >= stages_num)
+        {
+            /** Final stage finished: play baking_done once */
+            if(!baking_done_played)
+            {
+                baking_done_played = true;
+                play_melody(baking_done);
+            }
+
+        }
+        else
+        {
+            /** Intermediate stage finished: play stage_done */
+            play_melody(stage_done);
         }
 
     }
@@ -187,18 +242,19 @@ void vBuzzerTask(void *pvParameters)
 
     buzzer_hw_init();
     buzzer_play_tone(0U);
-    
-    check_error();
-    /** TO DO:
-     * wait for all task to initialize, then unlock and check error.
-    */
 
-    for (;;)
+    /** Play startup melody if no boot errors occurred */
+    if(SystemStatus == NO_ERROR)
     {
+        play_melody(ready_to_bake);
+    }
 
-        /* Suspend self until resumed */
-        vTaskSuspend(NULL);
+    for(;;)
+    {
+        check_error();
+        check_stage_end();
 
+        vTaskDelay(pdMS_TO_TICKS(250U));
     }
 
 }

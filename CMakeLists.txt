@@ -29,6 +29,7 @@ set(sources_SRCS
     app/src/RTOS/oven_controll_task.c
 
     app/src/RTOS/UI_task.c
+    app/src/RTOS/UI/UI_screen_end.c
     app/src/RTOS/UI/UI_screen_RTC.c
     app/src/RTOS/UI/UI_flash_assets.c
     app/src/RTOS/UI/UI_screen_setup.c

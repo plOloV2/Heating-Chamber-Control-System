@@ -90,6 +90,7 @@ void vUITask(void *pvParameters)
 
             case BAKING_DONE:
                 break_time = 1000U;
+                UI_RenderEndBakingScreen(phost, flash_ok);
                 break;
 
             case UI_ERROR:

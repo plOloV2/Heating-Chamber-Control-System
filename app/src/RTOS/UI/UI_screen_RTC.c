@@ -1,5 +1,5 @@
 /**
- * @file UI_screen_rtc.c
+ * @file UI_screen_RTC.c
  * @brief RTC date and time setup screen logic and rendering.
  *
  * @author Aleksander Dziągwa

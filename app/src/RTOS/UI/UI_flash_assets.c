@@ -234,6 +234,7 @@ void UI_RenderGreeterScreen(Gpu_Hal_Context_t *phost, bool flash_ok)
 {
     // Clear screen
     Gpu_CoCmd_Dlstart(phost);
+    App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(150, 150, 150));
     App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
     App_WrCoCmd_Buffer(phost, VERTEX_FORMAT(0U));
 
