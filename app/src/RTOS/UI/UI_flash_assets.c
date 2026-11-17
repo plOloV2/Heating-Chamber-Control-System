@@ -111,6 +111,12 @@ UI_states UI_InitAndCheckFlash(Gpu_Hal_Context_t *phost, bool *p_flash_ok)
         return GREETER;
     }
 
+    // Switch flash to BASIC state for programing
+    Gpu_CoCmd_Dlstart(phost);
+    Gpu_CoCmd_FlashHelper_SwitchState(phost, FLASH_STATUS_BASIC);
+    App_Flush_Co_Buffer(phost);
+    Gpu_Hal_WaitCmdfifo_empty(phost);
+
     flash_write_offset = 0U;
     return FLASH_BLOB;
 }
@@ -141,18 +147,13 @@ UI_states UI_StreamFlashBlob(Gpu_Hal_Context_t *phost, bool *p_flash_ok)
         return UI_ERROR;
     }
 
-    // Switch screen's flash into faster mode (requires first 4kb to be written)
-    if(flash_write_offset == 0U)
-    {
-        (void)Gpu_CoCmd_FlashHelper_SwitchFullMode(phost);
-    }
-
     // Update write offset and check if flashing is over
     flash_write_offset += FLASH_UPDATE_ALIGN_BYTE;
 
     if(flash_write_offset >= total_blob_size)
     {
         Gpu_CoCmd_Stop(phost);
+        Gpu_CoCmd_FlashHelper_SwitchFullMode(phost);
         App_Flush_Co_Buffer(phost);
         Gpu_Hal_WaitCmdfifo_empty(phost);
 

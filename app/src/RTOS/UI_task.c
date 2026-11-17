@@ -80,12 +80,14 @@ void vUITask(void *pvParameters)
                 break;
 
             case BAKING:
-                break_time = 1000U;
-                UI_RenderBakingScreen(phost, flash_ok);
                 if(Furnace_state.stage_ID >= Furnace_state.stages_num)
                 {
                     UI_State = BAKING_DONE;
+                    break_time = 10U;
+                    break;
                 }
+                break_time = 1000U;
+                UI_RenderBakingScreen(phost, flash_ok);
                 break;
 
             case BAKING_DONE:

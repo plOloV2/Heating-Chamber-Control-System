@@ -18,19 +18,18 @@ void UI_RenderEndBakingScreen(Gpu_Hal_Context_t *phost, bool flash_ok)
     App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
     App_WrCoCmd_Buffer(phost, VERTEX_FORMAT(0U));
 
-    UI_LoadOneAsset(phost, flash_ok, BACKGROUND_OFFSET, Farewell_480x272_ASTC_4X4_raw);
-
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 158, 73));
-    Gpu_CoCmd_Text(phost, 240, 10, 30, OPT_CENTERX, "Baking done!");
-
     if(flash_ok)
     {
+        UI_LoadOneAsset(phost, flash_ok, BACKGROUND_OFFSET, Farewell_480x272_ASTC_4X4_raw);
         App_WrCoCmd_Buffer(phost, BITMAP_HANDLE(0U));
         Gpu_CoCmd_SetBitmap(phost, BACKGROUND_OFFSET, COMPRESSED_RGBA_ASTC_4x4_KHR, 480, 272);
         App_WrCoCmd_Buffer(phost, BEGIN(BITMAPS));
         App_WrCoCmd_Buffer(phost, VERTEX2F(0U, 0U));
         App_WrCoCmd_Buffer(phost, END());
     }
+
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 158, 73));
+    Gpu_CoCmd_Text(phost, 240, 10, 30, OPT_CENTERX, "Baking done!");
 
     App_WrCoCmd_Buffer(phost, DISPLAY());
     Gpu_CoCmd_Swap(phost);

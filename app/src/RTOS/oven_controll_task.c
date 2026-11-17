@@ -11,6 +11,7 @@
  */
 
 #include <stdint.h>
+#include <math.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -18,9 +19,11 @@
 #include "stm32f4xx.h"
 #include "GPIO_pins_def.h"
 #include "furnace_struck.h"
-#include "RTOS/temp_task.h"
 #include "drivers/pin_operations.h"
 #include "drivers/IWDG_operations.h"
+
+#include "RTOS/SD_task.h"
+#include "RTOS/temp_task.h"
 #include "RTOS/oven_controll_task.h"
 
 /**
@@ -34,11 +37,15 @@
 #define TEMP_HYST_BAND_C        0.3f
 #define TEMP_SLOPE_LEAD_SEC     8.0f
 
+/** @brief Margin for rejecting faulty temp measurement */
+#define TEMP_DEVIATION_MARGIN   10.0f
+
 bool fan_on = false;
 bool heater_on = false;
+float target_temp = 0.0f;
 
 /** @brief Static helpers */
-static inline float GetAverageTemp(void);
+static float GetAverageTemp(void);
 static void UpdateCurrentState(float *p_target_temp, bool *p_first_run, float *p_prev_temp);
 static void UpdateTargetTempOnMinute(float *p_target_temp, const furnace_stage_data *p_stage);
 static void ControlFanAndHeater(float target_temp, float current_temp, float prev_temp);
@@ -48,7 +55,6 @@ void vOvenControllTask(void *pvParameters)
 {
     (void)pvParameters;
 
-    float target_temp = 0.0f;
     float prev_temp   = 0.0f;
     bool  first_run   = true;
 
@@ -75,15 +81,22 @@ void vOvenControllTask(void *pvParameters)
         /** Check if curing process has finished all stages */
         if(Furnace_state.stage_ID >= Furnace_state.stages_num)
         {
-            /** Safely turn OFF Heater and Fan before exiting curing loop */
             SetPin(HEAT_PORT, HEAT_PIN, !HEAT_ACTIVE);
             SetPin(FAN_PORT,  FAN_PIN,  !FAN_ACTIVE);
             heater_on = false;
-            first_run = true;
-            break;
+            fan_on    = false;
+
+            /** Infinite idle loop */
+            while(true)
+            {
+                ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+                reload_iwdg();
+                Furnace_state.average_temp = GetAverageTemp();
+            }
+
         }
 
-        /** Drive FAN and HEAT pins with bidirectional slope-aware hysteresis */
+        /** Drive FAN and HEAT pins */
         ControlFanAndHeater(target_temp, Furnace_state.average_temp, prev_temp);
 
         /** Drive pins acording to calculations */
@@ -94,22 +107,80 @@ void vOvenControllTask(void *pvParameters)
         prev_temp = Furnace_state.average_temp;
     }
 
-    /** Suspend permanently if task exits curing loop */
-    vTaskSuspend(NULL);
 }
 
 
-/** @brief Calculate mean temperature from all 4 PT1000 sensors */
-static inline float GetAverageTemp(void)
+/** @brief Calculate mean temperature from all 4 PT1000 sensors with worst-outlier rejection */
+static float GetAverageTemp(void)
 {
-    float average = 0.0f;
+    bool valid;
+    float average;
+    uint8_t temp_mask = 0U;
 
-    average += TempReal[0];
-    average += TempReal[1];
-    average += TempReal[2];
-    average += TempReal[3];
+    do
+    {
+        valid = true;
+        average = 0.0f;
+        uint8_t num_sens = 0U;
 
-    return (average / 4.0f);
+        /** Calculate average from valid sensors */
+        for(int i = 0; i < 4; i++)
+        {
+            if(READ_BIT(temp_mask, (1U << i)) != 0)
+            {
+                continue;
+            }
+
+            average += TempReal[i];
+            num_sens++;
+
+        }
+
+        /** Return immedietly if there's only one valid sensor */
+        if(num_sens == 1)
+        {
+            return average;
+        }
+
+        average /= (float)num_sens;
+
+        float biggest_dev = 0.0f;
+        uint8_t biggest_dev_id;
+
+        /** Check if any sensor deviate from the average by more than TEMP_DEVIATION_MARGIN */
+        for(int i = 0; i < 4; i++)
+        {
+            if(READ_BIT(temp_mask, (1U << i)) != 0)
+            {
+                continue;
+            }
+
+            /** Calculate current reading deviation */
+            const float deviation = fabsf(TempReal[i] - average);
+
+            /** Check reading's deviating */
+            if(deviation > TEMP_DEVIATION_MARGIN)
+            {
+                /** Select worst-outlier */
+                if(deviation > biggest_dev)
+                {
+                    biggest_dev = deviation;
+                    biggest_dev_id = i;
+                    valid = false;
+                }
+
+            }
+
+        }
+
+        if(!valid)
+        {
+            SET_BIT(temp_mask, (1U << biggest_dev_id));
+        }
+
+    }while(!valid);
+
+    return average;
 }
 
 
@@ -212,6 +283,12 @@ static void UpdateCurrentState(float *p_target_temp, bool *p_first_run, float *p
             UpdateTargetTempOnMinute(p_target_temp, &Stages[current_id]);
         }
 
+    }
+
+    /** SD task to log curing data every 5s */
+    if(Furnace_state.seconds_passed % 5 == 0)
+    {
+        xTaskNotifyGive(xSDTaskHandle);
     }
 
 }
