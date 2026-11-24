@@ -29,7 +29,7 @@ endif()
 
 # Combine branch and version
 if(NOT APP_BRANCH STREQUAL "" AND NOT APP_BRANCH STREQUAL "HEAD")
-    set(APP_VERSION "${APP_BRANCH}-${APP_VERSION}")
+    set(APP_VERSION "${APP_BRANCH}: ${APP_VERSION}")
 endif()
 
 # Generate the header using the specific paths passed in from CMakeLists.txt
