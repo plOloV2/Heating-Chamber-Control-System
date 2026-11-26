@@ -1,10 +1,10 @@
-# Aero Oven Rev.B
+# Aero Oven
 
 ## What is it?
 
-This is an *STM32F405RG* project of composite oven control board. It's based on baremetal C and CMSIS. It uses custom PCB with LCD screen, 4 controll buttons, 4 PT1000 temperature sensors, an SD Card, RTC clock and buzzer.
+This is an *STM32F405RG* project of composite oven control board. It's based on baremetal C and CMSIS. It uses custom PCB with LCD screen, 4 controll buttons, 4 PT1000 temperature sensors, an SD Card, RTC clock and buzzer. PCB was created in Altium Designer and it's project is available on this [repo](https://github.com/plOloV2/Aero_oven_PCB).
 
-This project is based on *CMSIS* and utalizes *FreeRTOS*. Version of C used: *C23*.
+This project is based on *CMSIS* and utalizes *FreeRTOS* and *FatFs*. Version of C used: *C23*.
 
 ## How to compile?
 
@@ -19,7 +19,7 @@ You may need to edit `cmake/toolchain-llvm.cmake` file, as ATfE prefix will prop
 With tools out of the way we can build the Debug version:
 
 ```bash
-git clone https://gitlab.com/pwr-racing-team/aero-oven.git
+git clone https://github.com/plOloV2/Heating-Chamber-Control-System.git
 cd aero-oven
 cmake --preset Debug
 cmake --build --preset Debug 
@@ -28,7 +28,7 @@ cmake --build --preset Debug
 Or Release:
 
 ```bash
-git clone https://gitlab.com/pwr-racing-team/aero-oven.git
+git clone https://github.com/plOloV2/Heating-Chamber-Control-System.git
 cd aero-oven
 cmake --preset Release
 cmake --build --preset Release 
